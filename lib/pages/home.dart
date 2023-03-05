@@ -9,10 +9,8 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          'Home',
-        ),
-        backgroundColor: Color.fromARGB(255, 50, 50, 50),
+        title: const Text('Home'),
+        backgroundColor: const Color.fromARGB(255, 50, 50, 50),
       ),
       drawer: Drawer(
         child: ListView(
@@ -35,30 +33,22 @@ class Home extends StatelessWidget {
               currentAccountPicture: FlutterLogo(),
             ),
             ListTile(
-              leading: Icon(
-                Icons.home,
-              ),
+              leading: const Icon(Icons.home),
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(
-                Icons.settings,
-              ),
+              leading: const Icon(Icons.settings),
               title: const Text('Settings '),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
-            Divider(
-              color: Colors.black,
-            ),
+            const Divider(color: Colors.black),
             ListTile(
-              leading: Icon(
-                Icons.logout,
-              ),
+              leading: const Icon(Icons.logout),
               title: const Text('Logout '),
               onTap: () {
                 Navigator.pop(context);
@@ -69,10 +59,8 @@ class Home extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          children: [
-            SizedBox(
-              height: 50,
-            ),
+          children: const [
+            SizedBox(height: 50),
           ],
         ),
       ),
