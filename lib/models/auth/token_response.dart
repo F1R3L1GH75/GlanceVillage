@@ -1,7 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:dart_json_mapper/dart_json_mapper.dart';
 
-@JsonSerializable(explicitToJson: true)
+@jsonSerializable
 class TokenResponse {
-  late String token;
-  late String refreshToken;
+  late String token = '';
+  late String refreshToken = '';
+  late DateTime refreshTokenExpiryTime = DateTime.now();
 }

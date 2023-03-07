@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   jwt_decoder: ^2.0.1
   http: ^0.13.5
-  json_annotation: ^4.8.0
+  dart_json_mapper: ^2.2.9
 
 dev_dependencies:
   flutter_test:
@@ -50,7 +50,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   build_runner: ^2.3.3
-  json_serializable: ^6.6.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
