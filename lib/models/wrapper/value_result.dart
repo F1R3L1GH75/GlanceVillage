@@ -7,9 +7,10 @@ class ValueResult<T> {
   bool succeeded = false;
   T? data;
 
-  // ValueResult(this.succeeded, this.messages, this.data);
-  //
+  ValueResult({required this.succeeded, required this.messages, required this.data});
+
   // static ValueResult<T> of<T>(dynamic jsonBody) {
-  //   return ValueResult(succeeded: jsonBody['succeeded'], messages: List<String>.from(jsonBody['messages'] as List), data: jsonBody['data']);
+  //   T? obj = JsonMapper.deserialize<T>(jsonDecode(jsonBody['data']));
+  //   return ValueResult<T>(succeeded: jsonBody['succeeded'], messages: List<String>.from(jsonBody['messages'] as List), data: obj);
   // }
 }

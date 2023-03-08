@@ -16,14 +16,16 @@ class LoginService {
       body: jsonEncode(request),
       headers: {'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'}
     );
-    print(response.body);
     if(response.statusCode == 200) {
       //r body = jsonDecode(response.body);
       //return ValueResult<TokenResponse>(body['succeeded'] as bool, body['messages'] as List<String>, body['data'] as TokenResponse);
-      //return ValueResult.of<TokenResponse>(jsonDecode(response.body));
+      //return ValueResult.of<TokenResponse>(response.body);
+      final jsonBody = jsonDecode(response.body);
+      TokenResponse? obj = JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
+      return ValueResult<TokenResponse>(succeeded: jsonBody['succeeded'], messages: List<String>.from(jsonBody['messages'] as List), data: obj);
       //final decorator = (tr) => tr.cast<TokenResponse>();
       //JsonMapper.registerValueDecorator<ValueResult<TokenResponse>>(decorator);
-      return JsonMapper.deserialize<ValueResult<TokenResponse>>(response.body)!;
+      //return JsonMapper.deserialize<ValueResult<TokenResponse>>(response.body)!;
     } else {
       throw Exception("Login Failed. Status Code : ${response.statusCode}");
     }
