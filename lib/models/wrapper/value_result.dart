@@ -9,8 +9,9 @@ class ValueResult<T> {
 
   ValueResult({required this.succeeded, required this.messages, required this.data});
 
-  // static ValueResult<T> of<T>(dynamic jsonBody) {
-  //   T? obj = JsonMapper.deserialize<T>(jsonDecode(jsonBody['data']));
+  // static ValueResult<T> of<T>(String json) {
+  //   final jsonBody = jsonDecode(json);
+  //   final obj = JsonMapper.deserialize<T>(jsonDecode(jsonBody['data']));
   //   return ValueResult<T>(succeeded: jsonBody['succeeded'], messages: List<String>.from(jsonBody['messages'] as List), data: obj);
   // }
 }

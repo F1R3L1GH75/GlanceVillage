@@ -23,9 +23,6 @@ class LoginService {
       final jsonBody = jsonDecode(response.body);
       TokenResponse? obj = JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
       return ValueResult<TokenResponse>(succeeded: jsonBody['succeeded'], messages: List<String>.from(jsonBody['messages'] as List), data: obj);
-      //final decorator = (tr) => tr.cast<TokenResponse>();
-      //JsonMapper.registerValueDecorator<ValueResult<TokenResponse>>(decorator);
-      //return JsonMapper.deserialize<ValueResult<TokenResponse>>(response.body)!;
     } else {
       throw Exception("Login Failed. Status Code : ${response.statusCode}");
     }
