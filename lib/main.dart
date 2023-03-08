@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
+import 'screens/login_page.dart';
 
 import 'main.mapper.g.dart' show initializeJsonMapper;
 

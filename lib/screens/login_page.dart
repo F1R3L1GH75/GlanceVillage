@@ -3,7 +3,26 @@ import 'package:glancefrontend/api/login_service.dart';
 import 'package:glancefrontend/components/my_button.dart';
 import 'package:glancefrontend/components/my_textfield.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
-import 'home.dart';
+import 'package:glancefrontend/screens/home.dart';
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      backgroundColor: Colors.grey[300],
+      body: const SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: LoginForm()
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -21,16 +40,16 @@ class _LoginFormState extends State<LoginForm> {
     String userName = usernameController.value.text;
     String password = passwordController.value.text;
     LoginService
-      .loginAsync(TokenRequest(userName: userName, password: password))
-      .then((result) => {
-        if(result.succeeded) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home()))
-        } else {
-          ScaffoldMessenger
+        .loginAsync(TokenRequest(userName: userName, password: password))
+        .then((result) => {
+      if(result.succeeded) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home()))
+      } else {
+        ScaffoldMessenger
             .of(context)
             .showSnackBar(SnackBar(content: Text(result.messages.first)))
-        }
-      });
+      }
+    });
   }
 
   @override
