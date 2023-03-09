@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'screens/login_page.dart';
+import 'screens/login_screen.dart';
 
 import 'main.mapper.g.dart' show initializeJsonMapper;
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: LoginScreen(),
     );
   }
 }

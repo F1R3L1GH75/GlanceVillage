@@ -17,8 +17,6 @@ class LoginService {
       headers: {'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'}
     );
     if(response.statusCode == 200) {
-      //r body = jsonDecode(response.body);
-      //return ValueResult<TokenResponse>(body['succeeded'] as bool, body['messages'] as List<String>, body['data'] as TokenResponse);
       //return ValueResult.of<TokenResponse>(response.body);
       final jsonBody = jsonDecode(response.body);
       TokenResponse? obj = JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
