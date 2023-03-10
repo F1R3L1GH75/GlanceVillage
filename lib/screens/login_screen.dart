@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:glancefrontend/api/login_service.dart';
+import 'package:glancefrontend/services/api/login_service.dart';
 import 'package:glancefrontend/components/shared_widget_configurations.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
 import 'package:glancefrontend/screens/home_screen.dart';
+import 'package:glancefrontend/services/local_storage.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -76,6 +77,12 @@ class LoginScreen extends StatelessWidget {
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
 
+  @protected
+  @mustCallSuper
+  void initState() {
+    LocalStorage.deleteAll();
+  }
+
   @override
   State<LoginForm> createState() => _LoginFormState();
 }
@@ -87,60 +94,60 @@ class _LoginFormState extends State<LoginForm> {
   _submitForm() {
     String userName = usernameController.value.text;
     String password = passwordController.value.text;
-    LoginService.loginAsync(
-        TokenRequest(userName: userName, password: password))
+    LoginService.loginAsync(TokenRequest(userName: userName, password: password))
         .then((result) => {
           if (result.succeeded) {
-            Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const HomeScreen()))
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()))
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.messages.first)))
           }
         });
   }
   @override
-  Widget build(BuildContext context) {return Column(
-    children: [
-      const SizedBox(height: 25),
-      Text('Login', style: Theme.of(context).textTheme.headlineSmall),
-      const SizedBox(height: 10),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Column(
-          children: [
-            TextField(
-              controller: usernameController,
-              decoration: InputDecorations.forTextFormField(
-                  hintText: 'Admin',
-                  labelText: 'User Name',
-                  prefixIcon: Icons.alternate_email_rounded),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              obscureText: true,
-              controller: passwordController,
-              decoration: InputDecorations.forTextFormField(
-                  hintText: 'Admin@123',
-                  labelText: 'Password',
-                  prefixIcon: Icons.lock_outline),
-            ),
-            const SizedBox(height: 20),
-            MaterialButton(
-              onPressed: _submitForm,
-              color: Colors.purple,
-              textColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 25),
+        Text('Login', style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            children: [
+              TextField(
+                controller: usernameController,
+                decoration: InputDecorations.forTextFormField(
+                    hintText: 'Admin',
+                    labelText: 'User Name',
+                    prefixIcon: Icons.alternate_email_rounded),
               ),
-              child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 80, vertical: 15),
-                  child: const Text('LOGIN')),
-            ),
-            const SizedBox(height: 30)
-          ],
+              const SizedBox(height: 10),
+              TextField(
+                obscureText: true,
+                controller: passwordController,
+                decoration: InputDecorations.forTextFormField(
+                    hintText: 'Admin@123',
+                    labelText: 'Password',
+                    prefixIcon: Icons.lock_outline),
+              ),
+              const SizedBox(height: 20),
+              MaterialButton(
+                onPressed: _submitForm,
+                color: Colors.purple,
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 15),
+                    child: const Text('LOGIN')),
+              ),
+              const SizedBox(height: 30)
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
   }
 }

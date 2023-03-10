@@ -38,6 +38,8 @@ dependencies:
   jwt_decoder: ^2.0.1
   http: ^0.13.5
   dart_json_mapper: ^2.2.9
+  http_interceptor: ^1.0.2
+  flutter_secure_storage: ^8.0.0
 
 dev_dependencies:
   flutter_test:
