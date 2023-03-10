@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glancefrontend/screens/settings_screen.dart';
 
 class NavBar extends StatelessWidget {
   @override
@@ -27,14 +28,14 @@ class NavBar extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pop(context);
+
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings '),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsWidget()));
             },
           ),
           const Divider(color: Colors.black),
