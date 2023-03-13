@@ -4,6 +4,7 @@ import 'package:glancefrontend/components/shared_widget_configurations.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
 import 'package:glancefrontend/screens/home_screen.dart';
 import 'package:glancefrontend/services/local_storage.dart';
+import '../components/my_Dropdown.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -57,8 +58,7 @@ class LoginScreen extends StatelessWidget {
                               offset: const Offset(0, 4),
                             )
                           ]),
-                      child: const LoginForm()
-                  ),
+                      child: const LoginForm()),
                   const SizedBox(height: 30),
                   const MaterialButton(
                     onPressed: null,
@@ -90,19 +90,30 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final roleController = TextEditingController();
 
   _submitForm() {
     String userName = usernameController.value.text;
     String password = passwordController.value.text;
-    LoginService.loginAsync(TokenRequest(userName: userName, password: password))
+    String role = roleController.value.text;
+    LoginService.loginAsync(
+            TokenRequest(userName: userName, password: password, role: role))
         .then((result) => {
-          if (result.succeeded) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()))
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.messages.first)))
-          }
-        });
+              if (result.succeeded)
+                {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen()))
+                }
+              else
+                {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(result.messages.first)))
+                }
+            });
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,6 +141,8 @@ class _LoginFormState extends State<LoginForm> {
                     labelText: 'Password',
                     prefixIcon: Icons.lock_outline),
               ),
+              const SizedBox(height: 10),
+              DropdownButtonExample(roleController: roleController),
               const SizedBox(height: 20),
               MaterialButton(
                 onPressed: _submitForm,
@@ -143,7 +156,7 @@ class _LoginFormState extends State<LoginForm> {
                         horizontal: 80, vertical: 15),
                     child: const Text('LOGIN')),
               ),
-              const SizedBox(height: 30)
+              const SizedBox(height: 30),
             ],
           ),
         ),

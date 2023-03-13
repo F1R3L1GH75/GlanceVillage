@@ -16,19 +16,25 @@ class LoginService {
   static Future<Result> loginAsync(TokenRequest request) async {
     try {
       final response = await http_client.post(
-          Uri.https(_baseUrl, 'api/v1/token'),
+          Uri.https(_baseUrl, '/api/users/token'),
           body: jsonEncode(request),
-          headers: {'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'}
-      );
-      if(response.statusCode == 200) {
+          headers: {
+            'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'
+          });
+      if (response.statusCode == 200) {
         //return ValueResult.of<TokenResponse>(response.body);
         final jsonBody = jsonDecode(response.body);
-        TokenResponse? obj = JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
+        TokenResponse? obj =
+            JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
         LocalStorage.setAuthToken(obj!.token);
         LocalStorage.setRefreshToken(obj.refreshToken);
-        return Result(succeeded: true, messages: List<String>.from(jsonBody['messages'] as List));
+        return Result(
+            succeeded: true,
+            messages: List<String>.from(jsonBody['messages'] as List));
       } else {
-        return Result(succeeded: false, messages: ["Login Failed. Status Code : ${response.statusCode}"]);
+        return Result(
+            succeeded: false,
+            messages: ["Login Failed. Status Code : ${response.statusCode}"]);
       }
     } on SocketException {
       return Result(succeeded: false, messages: ["No Internet Connection!"]);
@@ -42,18 +48,24 @@ class LoginService {
   static Future<Result> refreshTokenAsync(RefreshTokenRequest request) async {
     try {
       final response = await http_client.post(
-        Uri.https(_baseUrl, 'api/v1/token/refresh'),
-        body: jsonEncode(request),
-        headers: {'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'}
-      );
-      if(response.statusCode == 200) {
+          Uri.https(_baseUrl, '/api/users/token/refresh'),
+          body: jsonEncode(request),
+          headers: {
+            'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'
+          });
+      if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
-        TokenResponse? obj = JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
+        TokenResponse? obj =
+            JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
         LocalStorage.setAuthToken(obj!.token);
         LocalStorage.setRefreshToken(obj.refreshToken);
-        return Result(succeeded: true, messages: List<String>.from(jsonBody['messages'] as List));
+        return Result(
+            succeeded: true,
+            messages: List<String>.from(jsonBody['messages'] as List));
       } else {
-        return Result(succeeded: false, messages: ["Refresh Token Failed. Status Code : ${response.statusCode}"]);
+        return Result(succeeded: false, messages: [
+          "Refresh Token Failed. Status Code : ${response.statusCode}"
+        ]);
       }
     } on SocketException {
       return Result(succeeded: false, messages: ["No Internet Connection!"]);
