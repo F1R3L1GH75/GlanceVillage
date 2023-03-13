@@ -24,13 +24,20 @@ class LoginService {
       if (response.statusCode == 200) {
         //return ValueResult.of<TokenResponse>(response.body);
         final jsonBody = jsonDecode(response.body);
-        TokenResponse? obj =
-            JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
-        LocalStorage.setAuthToken(obj!.token);
-        LocalStorage.setRefreshToken(obj.refreshToken);
-        return Result(
-            succeeded: true,
-            messages: List<String>.from(jsonBody['messages'] as List));
+        final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
+        if (!success!) {
+          return Result(
+              succeeded: false,
+              messages: List<String>.from(jsonBody['messages'] as List));
+        } else {
+          TokenResponse? obj =
+              JsonMapper.deserialize<TokenResponse>(jsonBody['data']);
+          LocalStorage.setAuthToken(obj!.token);
+          LocalStorage.setRefreshToken(obj.refreshToken);
+          return Result(
+              succeeded: true,
+              messages: List<String>.from(jsonBody['messages'] as List));
+        }
       } else {
         return Result(
             succeeded: false,

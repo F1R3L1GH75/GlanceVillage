@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:glancefrontend/screens/login_screen.dart';
 import 'package:glancefrontend/screens/settings_screen.dart';
+import 'package:glancefrontend/services/local_storage.dart';
 
 class NavBar extends StatelessWidget {
   @override
@@ -27,15 +29,16 @@ class NavBar extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home),
             title: const Text('Home'),
-            onTap: () {
-
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings '),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsWidget()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsWidget()));
             },
           ),
           const Divider(color: Colors.black),
@@ -43,7 +46,9 @@ class NavBar extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout '),
             onTap: () {
-              Navigator.pop(context);
+              LocalStorage.deleteAll();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
           ),
         ],
