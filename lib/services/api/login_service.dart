@@ -7,16 +7,15 @@ import 'package:glancefrontend/models/auth/refresh_token_request.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
 import 'package:glancefrontend/models/auth/token_response.dart';
 import 'package:glancefrontend/models/wrapper/result.dart';
+import 'package:glancefrontend/services/api/api_settings.dart';
 import 'package:glancefrontend/services/local_storage.dart';
 import 'package:http/http.dart' as http_client;
 
 class LoginService {
-  static const String _baseUrl = "glance.sathiyaraman-m.com";
-
   static Future<Result> loginAsync(TokenRequest request) async {
     try {
       final response = await http_client.post(
-          Uri.https(_baseUrl, '/api/users/token'),
+          Uri.https(ApiSettings.baseUrl, '/api/users/token'),
           body: jsonEncode(request),
           headers: {
             'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'
@@ -55,7 +54,7 @@ class LoginService {
   static Future<Result> refreshTokenAsync(RefreshTokenRequest request) async {
     try {
       final response = await http_client.post(
-          Uri.https(_baseUrl, '/api/users/token/refresh'),
+          Uri.https(ApiSettings.baseUrl, '/api/users/token/refresh'),
           body: jsonEncode(request),
           headers: {
             'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'
