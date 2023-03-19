@@ -17,11 +17,8 @@ class LoginService {
       final response = await http_client.post(
           Uri.https(ApiSettings.baseUrl, '/api/users/token'),
           body: jsonEncode(request),
-          headers: {
-            'Content-Type': 'application/json; x-api-version=1.0; charset=UTF-8'
-          });
+          headers: await ApiSettings.getHeaders(addAuthToken: false));
       if (response.statusCode == 200) {
-        //return ValueResult.of<TokenResponse>(response.body);
         final jsonBody = jsonDecode(response.body);
         final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
         if (!success!) {

@@ -12,7 +12,7 @@ class JobCardService {
     try {
       final response = await http_client.get(
           Uri.https(ApiSettings.baseUrl, '/api/job-card/get'),
-          headers: await ApiSettings.getHeaders());
+          headers: await ApiSettings.getHeaders(addAuthToken: true));
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
         final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
