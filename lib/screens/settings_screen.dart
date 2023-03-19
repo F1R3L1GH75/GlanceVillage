@@ -5,18 +5,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class SettingsWidget extends StatefulWidget {
-  const SettingsWidget({Key? key}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  SettingsWidgetState createState() => SettingsWidgetState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
 enum _Actions { deleteAll }
 
 enum _ItemActions { delete, edit, containsKey, read }
 
-class SettingsWidgetState extends State<SettingsWidget> {
+class SettingsScreenState extends State<SettingsScreen> {
   final _storage = const FlutterSecureStorage();
   final _accountNameController =
   TextEditingController(text: 'flutter_secure_storage_service');
