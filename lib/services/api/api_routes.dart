@@ -12,11 +12,13 @@ class Dashboard {
 class JobCard {
   const JobCard();
   String getJobCardById(String id) => '/api/job-card/get/$id';
-  String getJobCardByCardNumber(String cardno) => '/api/job-card/get?cardno=$cardno';
+  String getJobCardByCardNumber(String cardno) =>
+      '/api/job-card/get?cardno=$cardno';
 }
 
 class Users {
   const Users();
   final String login = '/api/users/token';
   final String refreshToken = '/api/users/token/refresh';
+  String getUserAssignedPanchayats(String id) => '/api/users/$id/panchayats';
 }
