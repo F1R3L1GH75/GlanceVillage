@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:glancefrontend/models/users/user_assigned_panchayats.dart';
 import 'package:glancefrontend/screens/jobcards/dialogs/select_searchtype_dialog.dart';
 import 'package:glancefrontend/screens/jobcards/jobcard_detail_screen.dart';
+import 'package:glancefrontend/services/api/user_service.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 class JobCardsScreen extends StatelessWidget {
@@ -15,31 +17,61 @@ class JobCardsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF2661FA),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: GestureDetector(
-              onTap: () {
-                //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Search Job Cards')));
-                showDialog(context: context, builder: (_) => const SelectSearchTypeDialog());
-              },
-              child: const Icon(Icons.search)
-            )
-          ),
+              padding: const EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                  onTap: () {
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Search Job Cards')));
+                    showDialog(
+                        context: context,
+                        builder: (_) => const SelectSearchTypeDialog());
+                  },
+                  child: const Icon(Icons.search))),
           Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Menu')));
-              },
-              child: const Icon(Icons.more_vert)
-            )
-          )
+              padding: const EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text('Menu')));
+                  },
+                  child: const Icon(Icons.more_vert)))
         ],
       ),
-      body: const Center(
-        child: Text('Job Cards Screen'),
-      ),
+      body: Container(child: const LoadUserPanchayats()),
       floatingActionButton: const ScanQrCodeForJobCard(),
     );
+  }
+}
+
+class LoadUserPanchayats extends StatefulWidget {
+  const LoadUserPanchayats({super.key});
+
+  @override
+  State<LoadUserPanchayats> createState() => _LoadUserPanchayatsState();
+}
+
+class _LoadUserPanchayatsState extends State<LoadUserPanchayats> {
+  late Future<UserAssignedPanchayats> userAssignedPanchayats;
+  @override
+  void initState() {
+    super.initState();
+    userAssignedPanchayats = UserService.getUserAssignedPanchayats();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: userAssignedPanchayats,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(
+                'Id: ${snapshot.data!.id}, Panchayat: ${snapshot.data!.panchayats.first.name}'); //snapshot.data!.id);
+          } else if (snapshot.hasError) {
+            return const Text('Error');
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
+    //return const Text('Job Cards Screen');
   }
 }
 
@@ -51,7 +83,6 @@ class ScanQrCodeForJobCard extends StatefulWidget {
 }
 
 class _ScanQrCodeForJobCardState extends State<ScanQrCodeForJobCard> {
-
   String result = "";
 
   scanQR(BuildContext context) async {
@@ -59,12 +90,15 @@ class _ScanQrCodeForJobCardState extends State<ScanQrCodeForJobCard> {
       String? cameraScanResult = await scanner.scan();
       setState(() {
         result = cameraScanResult.toString();
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => JobCardDetailScreen(jobCardId: result)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => JobCardDetailScreen(jobCardId: result)));
       });
     } on PlatformException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to get platform version. $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to get platform version. $e')));
     } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
