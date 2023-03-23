@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:glancefrontend/models/dashboard_stat_response.dart';
+import 'package:glancefrontend/services/api/api_routes.dart';
 import 'package:glancefrontend/services/api/api_settings.dart';
 import 'package:http/http.dart' as http_client;
 
@@ -10,7 +11,7 @@ class DashboardService {
   static Future<DashboardStatResponse> getDashboardStats() async {
     try {
       final response = await http_client.get(
-          Uri.https(ApiSettings.baseUrl, '/api/dashboard/stats'),
+          Uri.https(ApiSettings.baseUrl, ApiRoutes.dashboardRoutes.getDashboardStats),
           headers: await ApiSettings.getHeaders(addAuthToken: true));
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);

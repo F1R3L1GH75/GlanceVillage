@@ -178,7 +178,7 @@ class _DashboardStatsState extends State<_DashboardStats> {
                   } else if(snapshot.hasError) {
                     return Column(children : [Text('Error: ${snapshot.error}')]);
                   }
-                  return Column(children : const [CircularProgressIndicator()]);
+                  return Center(child: Column(children : const [CircularProgressIndicator()]));
                 },
               ),
             )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/components/background.dart';
+import 'package:glancefrontend/models/wrapper/result.dart';
 import 'package:glancefrontend/services/api/login_service.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
 import 'package:glancefrontend/screens/home_screen.dart';
@@ -17,19 +18,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   String selectedRole = 'Admin';
 
-  _submitForm() {
+  _submitForm(BuildContext context) {
     String userName = usernameController.value.text;
     String password = passwordController.value.text;
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        content: Row(
+          children: const [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text('Logging in...')
+          ],
+        ));
+    }, barrierDismissible: false);
     LoginService.loginAsync(
         TokenRequest(userName: userName, password: password, role: selectedRole))
         .then((result) => {
-          if (result.succeeded) {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const HomeScreen()))
-            } else {
+            Navigator.pop(context),
+            if (result.succeeded) {
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const HomeScreen())),
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.messages.first)))
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${result.messages.first}}')))
             }
-        }
-    );
+          }
+        );
   }
 
   @override
@@ -121,7 +134,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 child: ElevatedButton(
-                  onPressed: _submitForm,
+                  onPressed: () {
+                    String userName = usernameController.value.text;
+                    String password = passwordController.value.text;
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            content: Row(
+                              children: const [
+                                CircularProgressIndicator(),
+                                SizedBox(width: 20),
+                                Text('Logging in...')
+                              ],
+                            ));
+                        },
+                      barrierDismissible: false
+                    );
+                    late Result result;
+                    LoginService
+                        .loginAsync(TokenRequest(userName: userName, password: password, role: selectedRole))
+                        .then((value) => result = value)
+                        .catchError((error) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $error')));
+                          return result;
+                        })
+                        .whenComplete(() => {
+                          Navigator.pop(context),
+                          if (result.succeeded) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const HomeScreen())),
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${result.messages.first}}')))
+                          }
+                        }
+                    );
+                  },
 
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

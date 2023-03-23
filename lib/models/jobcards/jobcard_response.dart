@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 
 @jsonSerializable
 class JobCardResponse {
+  String id = '';
   String jobCardNumber = '';
   String name = '';
   String fatherOrHusbandName = '';
@@ -24,9 +23,9 @@ class JobCardResponse {
   String pinCode = '';
   String createdBy = '';
   DateTime createdOn = DateTime.now();
-  String lastUpdatedBy = '';
+  String? lastUpdatedBy = '';
   DateTime? lastUpdatedOn;
   bool isVerified = false;
-  String verifiedBy = '';
-  String verifiedOn = '';
+  String? verifiedBy = '';
+  String? verifiedOn = '';
 }
