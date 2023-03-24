@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
 import 'package:glancefrontend/models/users/user_assigned_panchayats.dart';
 import 'package:glancefrontend/screens/jobcards/dialogs/select_searchtype_dialog.dart';
 import 'package:glancefrontend/screens/jobcards/jobcard_detail_screen.dart';
+import 'package:glancefrontend/services/api/jobcard_service.dart';
 import 'package:glancefrontend/services/api/user_service.dart';
+import 'package:provider/provider.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 class JobCardsScreen extends StatelessWidget {
@@ -36,62 +39,114 @@ class JobCardsScreen extends StatelessWidget {
                   child: const Icon(Icons.more_vert)))
         ],
       ),
-      body: const LoadUserPanchayats(),
+      body: ChangeNotifierProvider<JobCardsScreenState>(
+        create: (_) => JobCardsScreenState(),
+        builder: (context, child) {
+          return Column(children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 15),
+              child: DropdownButton<PanchayatResponse>(
+                  isExpanded: true,
+                  value: context.watch<JobCardsScreenState>().selectedPanchayat,
+                  items: context
+                      .read<JobCardsScreenState>()
+                      .panchayats
+                      .map<DropdownMenuItem<PanchayatResponse>>((val) {
+                    return DropdownMenuItem<PanchayatResponse>(
+                        value: val, child: Text(val.name));
+                  }).toList(),
+                  onChanged: (item) {
+                    context
+                        .read<JobCardsScreenState>()
+                        .setSelectedPanchayat(item);
+                  }),
+            ),
+            SingleChildScrollView(
+                child: ListView.builder(
+              itemCount: context.read<JobCardsScreenState>().jobCards.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: ListTile(
+                    title: Text(context
+                        .read<JobCardsScreenState>()
+                        .jobCards[index]
+                        .name),
+                    subtitle: Text(context
+                        .read<JobCardsScreenState>()
+                        .jobCards[index]
+                        .jobCardNumber),
+                  ),
+                );
+              },
+            ))
+          ]);
+        },
+      ), //const LoadUserPanchayats(),
       floatingActionButton: const ScanQrCodeForJobCard(),
     );
   }
 }
 
-class LoadUserPanchayats extends StatefulWidget {
-  const LoadUserPanchayats({super.key});
+class JobCardsScreenState with ChangeNotifier {
+  List<PanchayatResponse> _panchayats = [];
+  List<PanchayatResponse> get panchayats => _panchayats;
 
-  @override
-  State<LoadUserPanchayats> createState() => _LoadUserPanchayatsState();
-}
-
-class _LoadUserPanchayatsState extends State<LoadUserPanchayats> {
-  late Future<UserAssignedPanchayats> userAssignedPanchayats;
   PanchayatResponse? _selectedPanchayat;
-  @override
-  void initState() {
-    super.initState();
-    userAssignedPanchayats = UserService.getUserAssignedPanchayats();
+  PanchayatResponse? get selectedPanchayat => _selectedPanchayat;
+
+  List<JobCardResponse> _jobCards = [];
+  List<JobCardResponse> get jobCards => _jobCards;
+
+  int _pageNumber = 1;
+  int get pageNumber => _pageNumber;
+  void setPageNumber(int page) {
+    _pageNumber = page;
+    notifyListeners();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: userAssignedPanchayats,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            _selectedPanchayat ??= snapshot.data!.panchayats.first;
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 30, right: 30, top: 15),
-                    child: DropdownButton<PanchayatResponse>(
-                        isExpanded: true,
-                        value: _selectedPanchayat,
-                        items: snapshot.data!.panchayats
-                            .map<DropdownMenuItem<PanchayatResponse>>((val) {
-                          return DropdownMenuItem<PanchayatResponse>(
-                              value: val, child: Text(val.name));
-                        }).toList(),
-                        onChanged: (item) {
-                          setState(() {
-                            _selectedPanchayat = item!;
-                          });
-                        }),
-                  )
-                ]);
-          } else if (snapshot.hasError) {
-            return const Text('Error');
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+  final int _pageSize = 10;
+  int get pageSize => _pageSize;
+
+  String _searchQuery = "";
+  String get searchQuery => _searchQuery;
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  JobCardsScreenState() {
+    loadUserPanchayats();
+  }
+
+  Future<void> loadUserPanchayats() async {
+    try {
+      final userAssignedPanchayats =
+          await UserService.getUserAssignedPanchayats();
+      _panchayats = userAssignedPanchayats.panchayats;
+      _selectedPanchayat = _panchayats.first;
+      notifyListeners();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void setSelectedPanchayat(PanchayatResponse? panchayat) {
+    _selectedPanchayat = panchayat;
+    loadJobCards();
+    notifyListeners();
+  }
+
+  Future<void> loadJobCards() async {
+    try {
+      if (_selectedPanchayat == null) return;
+      final jobCards = await JobCardService.getAll(
+          _pageNumber, _pageSize, _searchQuery, _selectedPanchayat!);
+      _jobCards = jobCards.data!;
+      notifyListeners();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
 
