@@ -5,6 +5,7 @@ import 'package:glancefrontend/services/api/login_service.dart';
 import 'package:glancefrontend/models/auth/token_request.dart';
 import 'package:glancefrontend/screens/home_screen.dart';
 import 'package:glancefrontend/services/local_storage.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,42 +15,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  String selectedRole = 'Admin';
-
-  _submitForm(BuildContext context) {
-    String userName = usernameController.value.text;
-    String password = passwordController.value.text;
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Row(
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(width: 20),
-            Text('Logging in...')
-          ],
-        ));
-    }, barrierDismissible: false);
-    LoginService.loginAsync(
-        TokenRequest(userName: userName, password: password, role: selectedRole))
-        .then((result) => {
-            Navigator.pop(context),
-            if (result.succeeded) {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const HomeScreen())),
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.messages.first)))
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${result.messages.first}}')))
-            }
-          }
-        );
-  }
-
   @override
   void initState() {
     super.initState();
     LocalStorage.deleteAll();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
   }
+
+  late TextEditingController usernameController;
+  late TextEditingController passwordController;
 
   @override
   Widget build(BuildContext context) {
@@ -57,128 +32,135 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Background(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: const Text(
-                  "Glance | LOGIN",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2661FA),
-                      fontSize: 28
+          child: ChangeNotifierProvider(
+            create: (context) => LoginState(),
+            builder: (context, child) {
+              final provider = Provider.of<LoginState>(context);
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: const Text(
+                      "Glance | LOGIN",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2661FA),
+                          fontSize: 28),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: size.height * 0.03),
-              Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                      labelText: "Username"
+                  SizedBox(height: size.height * 0.03),
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    child: TextField(
+                      controller: usernameController,
+                      onChanged: provider.setUserName,
+                      decoration: const InputDecoration(labelText: "Username"),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(height: size.height * 0.03),
-              Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                      labelText: "Password"
+                  SizedBox(height: size.height * 0.03),
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    child: TextField(
+                      controller: passwordController,
+                      onChanged: provider.setPassword,
+                      decoration: const InputDecoration(labelText: "Password"),
+                      obscureText: true,
+                    ),
                   ),
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(height: size.height * 0.03),
-              Container(
-                alignment: Alignment.centerLeft,
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                child: DropdownButton(
-                  isExpanded: true,
-                  hint: const Text("Select Role"),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRole = value.toString();
-                    });
-                  },
-                  value: selectedRole,
-                  items: const [
-                    DropdownMenuItem(
-                      value: "Admin",
-                      child: Text("Admin"),
+                  SizedBox(height: size.height * 0.03),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      hint: const Text("Select Role"),
+                      onChanged: provider.setRole,
+                      value: context.watch<LoginState>().role,
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: "Admin",
+                          child: Text("Admin"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Officer",
+                          child: Text("Officer"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Supervisor",
+                          child: Text("Supervisor"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "DataEntry",
+                          child: Text("DataEntry"),
+                        ),
+                      ],
                     ),
-                    DropdownMenuItem(
-                      value: "Officer",
-                      child: Text("Officer"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Supervisor",
-                      child: Text("Supervisor"),
-                    ),
-                    DropdownMenuItem(
-                      value: "DataEntry",
-                      child: Text("DataEntry"),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: size.height * 0.03),
-              Container(
-                alignment: Alignment.centerRight,
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                child: ElevatedButton(
-                  onPressed: () {
-                    String userName = usernameController.value.text;
-                    String password = passwordController.value.text;
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                            content: Row(
-                              children: const [
-                                CircularProgressIndicator(),
-                                SizedBox(width: 20),
-                                Text('Logging in...')
-                              ],
-                            ));
-                        },
-                      barrierDismissible: false
-                    );
-                    late Result result;
-                    LoginService
-                        .loginAsync(TokenRequest(userName: userName, password: password, role: selectedRole))
-                        .then((value) => result = value)
-                        .catchError((error) {
+                  ),
+                  SizedBox(height: size.height * 0.03),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  content: Row(
+                                children: const [
+                                  CircularProgressIndicator(),
+                                  SizedBox(width: 20),
+                                  Text('Logging in...')
+                                ],
+                              ));
+                            },
+                            barrierDismissible: false);
+                        late Result result;
+                        LoginService.loginAsync(TokenRequest(
+                                userName: provider.userName,
+                                password: provider.password,
+                                role: provider.role))
+                            .then((value) => result = value)
+                            .catchError((error) {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $error')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $error')));
                           return result;
-                        })
-                        .whenComplete(() => {
-                          Navigator.pop(context),
-                          if (result.succeeded) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const HomeScreen())),
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${result.messages.first}}')))
-                          }
-                        }
-                    );
-                  },
-
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    backgroundColor: const Color(0xFF2661FA),
+                        }).whenComplete(() => {
+                                  Navigator.pop(context),
+                                  if (result.succeeded)
+                                    {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  const HomeScreen())),
+                                    }
+                                  else
+                                    {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Error: ${result.messages.first}}')))
+                                    }
+                                });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                        backgroundColor: const Color(0xFF2661FA),
+                      ),
+                      child: const Text("LOGIN"),
+                    ),
                   ),
-                  child: const Text("LOGIN"),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -190,5 +172,30 @@ class _LoginScreenState extends State<LoginScreen> {
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+}
+
+class LoginState extends ChangeNotifier {
+  String _userName = '';
+  String _password = '';
+  String _role = 'Admin';
+
+  String get userName => _userName;
+  String get password => _password;
+  String get role => _role;
+
+  void setUserName(String userName) {
+    _userName = userName;
+    notifyListeners();
+  }
+
+  void setPassword(String password) {
+    _password = password;
+    notifyListeners();
+  }
+
+  void setRole(String? role) {
+    _role = role!;
+    notifyListeners();
   }
 }
