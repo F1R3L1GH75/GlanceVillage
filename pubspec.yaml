@@ -42,6 +42,7 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   intl: ^0.18.0
   qrscan: ^0.3.3
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
