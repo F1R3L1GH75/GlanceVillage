@@ -36,7 +36,7 @@ class JobCardsScreen extends StatelessWidget {
                   child: const Icon(Icons.more_vert)))
         ],
       ),
-      body: Container(child: const LoadUserPanchayats()),
+      body: const LoadUserPanchayats(),
       floatingActionButton: const ScanQrCodeForJobCard(),
     );
   }
@@ -51,6 +51,7 @@ class LoadUserPanchayats extends StatefulWidget {
 
 class _LoadUserPanchayatsState extends State<LoadUserPanchayats> {
   late Future<UserAssignedPanchayats> userAssignedPanchayats;
+  PanchayatResponse? _selectedPanchayat;
   @override
   void initState() {
     super.initState();
@@ -63,15 +64,34 @@ class _LoadUserPanchayatsState extends State<LoadUserPanchayats> {
         future: userAssignedPanchayats,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text(
-                'Id: ${snapshot.data!.id}, Panchayat: ${snapshot.data!.panchayats.first.name}'); //snapshot.data!.id);
+            _selectedPanchayat ??= snapshot.data!.panchayats.first;
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 30, right: 30, top: 15),
+                    child: DropdownButton<PanchayatResponse>(
+                        isExpanded: true,
+                        value: _selectedPanchayat,
+                        items: snapshot.data!.panchayats
+                            .map<DropdownMenuItem<PanchayatResponse>>((val) {
+                          return DropdownMenuItem<PanchayatResponse>(
+                              value: val, child: Text(val.name));
+                        }).toList(),
+                        onChanged: (item) {
+                          setState(() {
+                            _selectedPanchayat = item!;
+                          });
+                        }),
+                  )
+                ]);
           } else if (snapshot.hasError) {
             return const Text('Error');
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
-    //return const Text('Job Cards Screen');
   }
 }
 
