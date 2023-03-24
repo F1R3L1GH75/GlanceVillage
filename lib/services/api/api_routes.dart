@@ -14,6 +14,7 @@ class JobCard {
   String getJobCardById(String id) => '/api/job-card/get/$id';
   String getJobCardByCardNumber(String cardno) =>
       '/api/job-card/get?cardno=$cardno';
+  final String getAll = '/api/job-card/get';
 }
 
 class Users {
