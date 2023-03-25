@@ -62,27 +62,32 @@ class JobCardsScreen extends StatelessWidget {
                   }),
             ),
             SingleChildScrollView(
-                child: ListView.builder(
+                child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: ListView.builder(
               itemCount: context.read<JobCardsScreenState>().jobCards.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                final jobCard = context.read<JobCardsScreenState>().jobCards[index];
                 return Card(
                   child: ListTile(
-                    title: Text(context
-                        .read<JobCardsScreenState>()
-                        .jobCards[index]
-                        .name),
-                    subtitle: Text(context
-                        .read<JobCardsScreenState>()
-                        .jobCards[index]
-                        .jobCardNumber),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => JobCardDetailScreen(
+                                  jobCardId: jobCard.id)));
+                    },
+                    title: Text(jobCard.name),
+                    subtitle: Text('${jobCard.jobCardNumber}, Age ${(DateTime.now().difference(jobCard.dateOfBirth).inDays ~/ 365)}'),
                   ),
                 );
               },
             ))
+            )
           ]);
         },
-      ), //const LoadUserPanchayats(),
+      ),
       floatingActionButton: const ScanQrCodeForJobCard(),
     );
   }

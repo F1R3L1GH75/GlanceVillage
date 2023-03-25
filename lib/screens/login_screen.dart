@@ -59,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: usernameController,
                       onChanged: provider.setUserName,
                       decoration: const InputDecoration(labelText: "Username"),
+                      cursorColor: const Color(0xFF2661FA),
                     ),
                   ),
                   SizedBox(height: size.height * 0.03),
@@ -68,8 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextField(
                       controller: passwordController,
                       onChanged: provider.setPassword,
-                      decoration: const InputDecoration(labelText: "Password"),
+                      decoration: const InputDecoration(labelText: "Password", focusColor: Color(0xFF2661FA), hoverColor: Color(0xFF2661FA)),
                       obscureText: true,
+                      cursorColor: const Color(0xFF2661FA),
                     ),
                   ),
                   SizedBox(height: size.height * 0.03),
@@ -81,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       hint: const Text("Select Role"),
                       onChanged: provider.setRole,
                       value: context.watch<LoginState>().role,
+                      focusColor: const Color(0xFF2661FA),
                       items: const [
                         DropdownMenuItem<String>(
                           value: "Admin",
