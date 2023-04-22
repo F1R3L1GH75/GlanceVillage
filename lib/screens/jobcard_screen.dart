@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,7 +22,7 @@ class _IndexPageState extends State<IndexPage> {
       isLoading = true;
     });
     var url = "https://randomuser.me/api/?results=50";
-    var response = await http.get(url);
+    var response = await http.get(url as Uri);
     // print(response.body);
     if (response.statusCode == 200) {
       var items = json.decode(response.body)['results'];

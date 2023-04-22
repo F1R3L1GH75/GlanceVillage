@@ -69,9 +69,10 @@ class JobCardService {
       final hasPreviousPage =
           JsonMapper.deserialize<bool>(jsonBody['hasPreviousPage'])!;
       final pageSize = JsonMapper.deserialize<int>(jsonBody['pageSize'])!;
+      final em =
+          JsonMapper.deserialize<List<JobCardResponse>>(jsonBody['data'])!;
       return PagedResult(
-          data:
-              JsonMapper.deserialize<List<JobCardResponse>>(jsonBody['data'])!,
+          data: em,
           messages: List<String>.from(jsonBody['messages']),
           succeeded: success,
           currentPage: currentPage,
