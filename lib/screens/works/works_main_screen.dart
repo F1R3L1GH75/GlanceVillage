@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/users/user_assigned_panchayats.dart';
 import 'package:glancefrontend/models/works/work_response.dart';
 import 'package:glancefrontend/screens/works/work_detail_screen.dart';
+import 'package:glancefrontend/screens/works/workorders_screen.dart';
 import 'package:glancefrontend/services/api/user_service.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:provider/provider.dart';
@@ -60,28 +61,36 @@ class WorksMainScreen extends StatelessWidget {
                     }),
               ),
               Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.builder(
-                  itemCount: context.watch<WorksScreenState>().works.length,
-                  itemBuilder: (context, index) {
-                    final work = context.read<WorksScreenState>().works[index];
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      WorkDetailScreen(workId: work.id)));
-                        },
-                        title: Text(work.name!),
-                        subtitle: Text('${work.code!}, ${work.location!}'),
-                      ),
-                    );
-                  },
-                ),
-              ))
+                  child: context.read<WorksScreenState>().works.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            itemCount:
+                                context.watch<WorksScreenState>().works.length,
+                            itemBuilder: (context, index) {
+                              final work =
+                                  context.read<WorksScreenState>().works[index];
+                              return Card(
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => WorkDetailScreen(
+                                                workId: work.id)));
+                                  },
+                                  title: Text(work.name!),
+                                  subtitle:
+                                      Text('${work.code!}, ${work.location!}'),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : Center(
+                          child: Image.asset(
+                              'assets/images/no_results_found.png',
+                              width: double.infinity)))
             ],
           );
         },
