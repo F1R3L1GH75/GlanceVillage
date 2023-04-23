@@ -2,6 +2,7 @@ class ApiRoutes {
   static const dashboardRoutes = Dashboard();
   static const jobCardRoutes = JobCard();
   static const usersRoutes = Users();
+  static const workRoutes = Work();
 }
 
 class Dashboard {
@@ -22,4 +23,10 @@ class Users {
   final String login = '/api/users/token';
   final String refreshToken = '/api/users/token/refresh';
   String getUserAssignedPanchayats(String id) => '/api/users/$id/panchayats';
+}
+
+class Work {
+  const Work();
+  final String getAll = '/api/work';
+  String getWorkById(String id) => '/api/work/$id';
 }
