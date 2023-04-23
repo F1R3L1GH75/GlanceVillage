@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dart_json_mapper/dart_json_mapper.dart';
+import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/work_response.dart';
 import 'package:glancefrontend/models/wrapper/paged_result.dart';
 import 'package:glancefrontend/services/api/api_routes.dart';
@@ -42,7 +43,7 @@ class WorkService {
     }
   }
 
-  static Future<WorkResponse> getByIdAsync(String id) async {
+  static Future<WorkFullResponse> getByIdAsync(String id) async {
     final response = await http_client.get(
         Uri.https(ApiSettings.baseUrl, ApiRoutes.workRoutes.getWorkById(id)),
         headers: await ApiSettings.getHeaders(addAuthToken: true));
@@ -50,7 +51,7 @@ class WorkService {
       final jsonBody = jsonDecode(response.body);
       final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
       if (success == true) {
-        return JsonMapper.deserialize<WorkResponse>(jsonBody['data'])!;
+        return JsonMapper.deserialize<WorkFullResponse>(jsonBody['data'])!;
       } else {
         return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
       }

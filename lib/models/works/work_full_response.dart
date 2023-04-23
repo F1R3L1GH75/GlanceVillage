@@ -2,6 +2,7 @@ import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:glancefrontend/models/local-directory/village_response.dart';
 import 'package:glancefrontend/models/users/user_assigned_panchayats.dart';
 
+@jsonSerializable
 class WorkFullResponse {
   /***
    * {
@@ -56,7 +57,6 @@ class WorkFullResponse {
   String? natureOfWork = '';
   String? scopeOfWork = '';
   bool isCompleted = false;
-  @JsonProperty(name: 'villages')
   List<VillageResponse>? villages = [];
   PanchayatResponse? panchayat;
   BlockResponse? block;
@@ -66,5 +66,5 @@ class WorkFullResponse {
   DateTime? endDate;
   String? location = '';
   int estimatedDuration = 0;
-  double estimatedCost = 0;
+  int estimatedCost = 0;
 }
