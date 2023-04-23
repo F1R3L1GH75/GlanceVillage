@@ -64,10 +64,6 @@ class JobCardService {
       final currentPage = JsonMapper.deserialize<int>(jsonBody['currentPage'])!;
       final totalPages = JsonMapper.deserialize<int>(jsonBody['totalPages'])!;
       final totalCount = JsonMapper.deserialize<int>(jsonBody['totalCount'])!;
-      final hasNextPage =
-          JsonMapper.deserialize<bool>(jsonBody['hasNextPage'])!;
-      final hasPreviousPage =
-          JsonMapper.deserialize<bool>(jsonBody['hasPreviousPage'])!;
       final pageSize = JsonMapper.deserialize<int>(jsonBody['pageSize'])!;
       final em =
           JsonMapper.deserialize<List<JobCardResponse>>(jsonBody['data'])!;
@@ -78,8 +74,8 @@ class JobCardService {
           currentPage: currentPage,
           totalPages: totalPages,
           totalCount: totalCount,
-          hasNextPage: hasNextPage,
-          hasPreviousPage: hasPreviousPage,
+          hasNextPage: currentPage < totalPages,
+          hasPreviousPage: currentPage > 1,
           pageSize: pageSize);
     } else {
       return Future.error(

@@ -29,7 +29,7 @@ class JobCardResponse {
   String? createdBy = '';
   DateTime createdOn = DateTime.now();
   String? lastUpdatedBy = '';
-  DateTime? lastUpdatedOn = null;
+  DateTime? lastUpdatedOn;
   bool isVerified = false;
   String? verifiedBy = '';
   String? verifiedOn = '';

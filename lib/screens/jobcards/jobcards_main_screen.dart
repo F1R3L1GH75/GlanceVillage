@@ -44,7 +44,7 @@ class JobCardsScreen extends StatelessWidget {
         builder: (context, child) {
           return Column(children: [
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 15),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: DropdownButton<PanchayatResponse>(
                   isExpanded: true,
                   value: context.watch<JobCardsScreenState>().selectedPanchayat,
@@ -61,29 +61,35 @@ class JobCardsScreen extends StatelessWidget {
                         .setSelectedPanchayat(item);
                   }),
             ),
-            SingleChildScrollView(
-                child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: ListView.builder(
-              itemCount: context.read<JobCardsScreenState>().jobCards.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final jobCard = context.read<JobCardsScreenState>().jobCards[index];
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => JobCardDetailScreen(
-                                  jobCardId: jobCard.id)));
-                    },
-                    title: Text(jobCard.name),
-                    subtitle: Text('${jobCard.jobCardNumber}, Age ${(DateTime.now().difference(jobCard.dateOfBirth).inDays ~/ 365)}'),
-                  ),
-                );
-              },
-            ))
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount:
+                      context.read<JobCardsScreenState>().jobCards.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final jobCard =
+                        context.read<JobCardsScreenState>().jobCards[index];
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => JobCardDetailScreen(
+                                      jobCardId: jobCard.id)));
+                        },
+                        title: Text(jobCard.name!),
+                        subtitle: Text(
+                            '${jobCard.jobCardNumber}, Age ${(DateTime.now().difference(jobCard.dateOfBirth).inDays ~/ 365)}'),
+                      ),
+                    );
+                  },
+                ),
+              ),
             )
           ]);
         },
@@ -129,7 +135,7 @@ class JobCardsScreenState with ChangeNotifier {
       final userAssignedPanchayats =
           await UserService.getUserAssignedPanchayats();
       _panchayats = userAssignedPanchayats.panchayats;
-      _selectedPanchayat = _panchayats.first;
+      setSelectedPanchayat(panchayats.first);
       notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
