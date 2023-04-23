@@ -15,8 +15,8 @@ class WorkOrderResponse {
   String? id = '';
   DateTime? date;
   String? location = '';
-  double? latitude = 0;
-  double? longitude = 0;
+  int latitude = 0;
+  int longitude = 0;
   String? workId = '';
   String? code = '';
   String? workName = '';
