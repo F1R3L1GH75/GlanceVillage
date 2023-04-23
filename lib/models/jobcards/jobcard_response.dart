@@ -12,7 +12,7 @@ class JobCardResponse {
   DateTime dateOfBirth = DateTime.now();
   int yearOfBirth = 0;
   String? rationCardNumber = '';
-  String? gende = '';
+  String? gender = '';
   String? category = '';
   String? address = '';
   String? village = '';

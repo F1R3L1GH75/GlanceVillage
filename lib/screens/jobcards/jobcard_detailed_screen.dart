@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
+import 'package:intl/intl.dart';
 
 class JobCardDetailedScreen extends StatelessWidget {
   const JobCardDetailedScreen({Key? key, required this.jobCard})
@@ -11,18 +12,26 @@ class JobCardDetailedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final address = [
+      jobCard!.address as String,
+      jobCard!.village as String,
+      jobCard!.district as String,
+      jobCard!.state as String,
+      jobCard!.pinCode as String
+    ];
     return Scaffold(
       //app bar theme for tablet
       appBar: AppBar(
+        backgroundColor: const Color(0xFF2661FA),
         title: Text('Job Card Details'),
         actions: [
           InkWell(
             child: Container(
-              padding: EdgeInsets.only(right: 24 / 2),
+              padding: EdgeInsets.only(right: 20, left: 20),
               child: Row(
                 children: [
                   Icon(Icons.report_gmailerrorred_outlined),
-                  const SizedBox(height: 10),
+                  const SizedBox(width: 10),
                   Text(
                     'Report',
                     style: Theme.of(context).textTheme.titleSmall,
@@ -34,129 +43,66 @@ class JobCardDetailedScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        child: Column(
-          children: [
-            Container(
-              width: 100,
-              height: 19,
-              decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 13,
-                    backgroundColor: Colors.white,
-                    backgroundImage:
-                        AssetImage('assets/images/student_profile.jpeg'),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'test',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text('Worker',
-                          style: Theme.of(context).textTheme.titleSmall),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ProfileDetailRow(
-                    title: 'JobCard Number', value: '${jobCard!.id}'),
-                ProfileDetailRow(title: 'Name', value: '${jobCard!.name}'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ProfileDetailRow(title: 'Aadhar Number', value: '98876656'),
-                ProfileDetailRow(title: 'Email ', value: 'r@gmal.com'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ProfileDetailRow(
-                    title: 'Ration Card Number', value: '202320222020'),
-                ProfileDetailRow(title: 'Date of Birth', value: '3 May 1998'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            ProfileDetailColumn(
-              title: 'Email',
-              value: 'test@gmail.com',
-            ),
-            ProfileDetailColumn(
-              title: 'Father Name',
-              value: 'test dad ',
-            ),
-            ProfileDetailColumn(
-              title: 'Mother Name',
-              value: 'Test mom',
-            ),
-            ProfileDetailColumn(
-              title: 'Phone Number',
-              value: '+923066666666',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProfileDetailRow extends StatelessWidget {
-  const ProfileDetailRow({Key? key, required this.title, required this.value})
-      : super(key: key);
-  final String title;
-  final String value;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(12),
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Colors.black,
-                      fontSize: 9,
-                    ),
+              ProfileDetailColumn(
+                title: 'JobCard Number',
+                value: jobCard!.jobCardNumber as String,
               ),
-              const SizedBox(height: 10),
-              Text(value, style: Theme.of(context).textTheme.bodySmall),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 35,
-                child: Divider(
-                  thickness: 1.0,
-                ),
+              ProfileDetailColumn(
+                title: 'Name',
+                value: jobCard!.name as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Father/Husband Name',
+                value: jobCard!.fatherOrHusbandName as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Email',
+                value: jobCard!.email as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Phone Number',
+                value: jobCard!.mobileNumber as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Date of Birth',
+                value: DateFormat('dd/MM/yyyy')
+                    .format(jobCard!.dateOfBirth as DateTime),
+              ),
+              ProfileDetailColumn(
+                title: 'Ration Card Number',
+                value: jobCard!.rationCardNumber as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Gender',
+                value: jobCard!.gender as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Category',
+                value: jobCard!.category as String,
+              ),
+              ProfileDetailColumn(
+                title: 'Address',
+                value: address.join(', '),
+              ),
+              ProfileDetailColumn(
+                title: 'Last Updated On',
+                value: DateFormat('dd/MM/yyyy')
+                    .format(jobCard!.lastUpdatedOn as DateTime),
+              ),
+              ProfileDetailColumn(
+                title: 'Verified on',
+                value: jobCard!.verifiedOn as String,
               ),
             ],
           ),
-          Icon(
-            Icons.lock_outline,
-            size: 10,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -170,37 +116,41 @@ class ProfileDetailColumn extends StatelessWidget {
   final String value;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Colors.black,
-                      fontSize: 11,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                    //width: double.infinity,
+                    // child: Divider(
+                    //   thickness: 1.0,
+                    // ),
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
                     ),
-              ),
-              const SizedBox(height: 10),
-              Text(value, style: Theme.of(context).textTheme.bodySmall),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 92,
-                child: Divider(
-                  thickness: 1.0,
+                    const SizedBox(height: 10),
+                    Text(value),
+                  ],
+                )),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 17,
+                  ),
                 ),
-              )
-            ],
-          ),
-          Icon(
-            Icons.lock_outline,
-            size: 10,
-          ),
-        ],
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
