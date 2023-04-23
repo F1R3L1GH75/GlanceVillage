@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/work_response.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class WorkDetailScreen extends StatelessWidget {
@@ -52,46 +53,97 @@ class WorkDetailScreen extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Card(
-                          margin: const EdgeInsets.only(
-                              left: 12, right: 12, top: 12),
-                          child: ListTile(
-                              title: const Text('Work Name'),
-                              subtitle: Text('${work.name}')),
+                        Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Center(
+                            child: Text(
+                              '${work.name}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
+                        MaterialButton(
+                            onPressed: () {},
+                            child: const Text('View Work Orders')),
                         Card(
-                          margin: const EdgeInsets.only(
-                              left: 12, right: 12, top: 12),
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
                           child: ListTile(
                               title: const Text('Nature of Work'),
                               subtitle: Text('${work.natureOfWork}')),
                         ),
                         Card(
-                          margin: const EdgeInsets.only(
-                              left: 12, right: 12, top: 12),
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
                           child: ListTile(
                               title: const Text('Scope of Work'),
                               subtitle: Text('${work.scopeOfWork}')),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 12, right: 12, top: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Card(
-                                  child: ListTile(
-                                title: Text('Work Status'),
-                                subtitle: Text('Completed'),
-                              )),
-                              Card(
-                                  child: ListTile(
-                                title: Text('Work Progress'),
-                                subtitle: Text('100%'),
-                              )),
-                            ],
-                          ),
-                        )
+                        Card(
+                            margin: const EdgeInsets.only(
+                                left: 8, right: 8, top: 8),
+                            child: ListTile(
+                              title: const Text('Work Completion Status'),
+                              trailing: work.isCompleted == true
+                                  ? const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                                  : const Icon(Icons.construction),
+                            )),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('Start Date '),
+                              trailing: Text(DateFormat('dd/MM/yyyy')
+                                  .format(work.startDate!))),
+                        ),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('End Date '),
+                              trailing: Text(DateFormat('dd/MM/yyyy')
+                                  .format(work.endDate!))),
+                        ),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('Villages'),
+                              subtitle: Text(work.villages!
+                                  .map((element) => element.name)
+                                  .join(', '))),
+                        ),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('Location'),
+                              subtitle: Text('${work.panchayat!.name}, '
+                                  '${work.block!.name}, '
+                                  '${work.district!.name}, ${work.state!.name}')),
+                        ),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('Estimated Cost'),
+                              subtitle: Text('Rs.${work.estimatedCost}')),
+                        ),
+                        Card(
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                              title: const Text('Estimated Duration'),
+                              subtitle:
+                                  Text('${work.estimatedDuration} Months')),
+                        ),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),
