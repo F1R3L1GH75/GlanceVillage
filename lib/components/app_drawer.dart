@@ -3,6 +3,7 @@ import 'package:glancefrontend/screens/home_screen.dart';
 import 'package:glancefrontend/screens/jobcards/jobcards_main_screen.dart';
 import 'package:glancefrontend/screens/login_screen.dart';
 import 'package:glancefrontend/screens/settings_screen.dart';
+import 'package:glancefrontend/screens/works/works_main_screen.dart';
 import 'package:glancefrontend/services/claim_data_service.dart';
 import 'package:glancefrontend/services/local_storage.dart';
 
@@ -51,6 +52,14 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Job Cards'),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const JobCardsScreen()));
+            },
+          ),
+          const Divider(color: Colors.black),
+          ListTile(
+            leading: const Icon(Icons.collections),
+            title: const Text('Works'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const WorksMainScreen()));
             },
           ),
           ListTile(
