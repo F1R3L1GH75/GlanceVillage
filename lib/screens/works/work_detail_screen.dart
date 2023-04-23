@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/work_response.dart';
+import 'package:glancefrontend/screens/works/workorders_screen.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,6 @@ class WorkDetailScreen extends StatelessWidget {
             if (provider.isError == true) {
               return Scaffold(
                 appBar: AppBar(
-                  centerTitle: true,
                   title: const Text('Work Detail: Error'),
                   backgroundColor: const Color(0xFF2661FA),
                 ),
@@ -45,7 +45,6 @@ class WorkDetailScreen extends StatelessWidget {
             } else {
               return Scaffold(
                 appBar: AppBar(
-                  centerTitle: true,
                   title: Text('Work: ${work!.code ?? 'Loading'}'),
                   backgroundColor: const Color(0xFF2661FA),
                 ),
@@ -54,7 +53,8 @@ class WorkDetailScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 20, bottom: 12),
                           child: Center(
                             child: Text(
                               '${work.name}',
@@ -65,12 +65,23 @@ class WorkDetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        MaterialButton(
-                            onPressed: () {},
-                            child: const Text('View Work Orders')),
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.open_in_new),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xFF2661FA))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => WorkOrdersScreen(
+                                        workId: work.id, workCode: work.code)));
+                          },
+                          label: const Text('VIEW WORK ORDERS'),
+                        ),
                         Card(
                           margin:
-                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                              const EdgeInsets.only(left: 8, right: 8, top: 16),
                           child: ListTile(
                               title: const Text('Nature of Work'),
                               subtitle: Text('${work.natureOfWork}')),
@@ -153,7 +164,6 @@ class WorkDetailScreen extends StatelessWidget {
           } else {
             return Scaffold(
               appBar: AppBar(
-                centerTitle: true,
                 title: const Text('Work Detail: Loading'),
                 backgroundColor: const Color(0xFF2661FA),
               ),
