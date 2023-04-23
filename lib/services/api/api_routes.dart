@@ -29,4 +29,8 @@ class Work {
   const Work();
   final String getAll = '/api/work';
   String getWorkById(String id) => '/api/work/$id';
+  final String getWorkOrdersByWorkId = '/api/work-order';
+  final String createWorkOrder = '/api/work-order';
+  final String updateWorkOrder = '/api/work-order';
+  String deleteWorkOrder(String id) => '/api/work-order/$id';
 }
