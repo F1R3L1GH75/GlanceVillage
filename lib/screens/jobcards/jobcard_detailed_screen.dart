@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
 
-class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({Key? key}) : super(key: key);
+class JobCardDetailedScreen extends StatelessWidget {
+  const JobCardDetailedScreen({Key? key, required this.jobCard})
+      : super(key: key);
   static String routeName = 'MyJobCardDetailedScreen';
+
+  final JobCardResponse? jobCard;
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +75,8 @@ class MyProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ProfileDetailRow(
-                    title: 'JobCard Number', value: '2020-ASDF-2021'),
-                ProfileDetailRow(title: 'JobCard id', value: '2020-2021'),
+                    title: 'JobCard Number', value: '${jobCard!.id}'),
+                ProfileDetailRow(title: 'Name', value: '${jobCard!.name}'),
               ],
             ),
             Row(

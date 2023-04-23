@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
+import 'package:glancefrontend/screens/jobcards/jobcard_detailed_screen.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
 
 class JobCardDetailScreen extends StatefulWidget {
@@ -23,63 +24,63 @@ class _JobCardDetailScreenState extends State<JobCardDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<JobCardResponse>(
-      future: _jobCard,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text('Job Card Detail: ${snapshot.data!.jobCardNumber}'),
-              backgroundColor: const Color(0xFF2661FA),
-            ),
-            body: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(18),
-                      child: Column(
-                        children: [
-                          Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Text(
-                                      'Job Card Number: ${snapshot.data!.jobCardNumber}'),
-                                  subtitle: Text(
-                                      'Job Card Name: ${snapshot.data!.name}'),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(body: Center(child: Text('${snapshot.error}')));
-        } else {
-          return Scaffold(
+        future: _jobCard,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return JobCardDetailedScreen(jobCard: snapshot.data!);
+            /*return Scaffold(
               appBar: AppBar(
-                title: const Text('Loading...'),
+                centerTitle: true,
+                title: Text('Job Card Detail: ${snapshot.data!.jobCardNumber}'),
                 backgroundColor: const Color(0xFF2661FA),
               ),
-              body: SafeArea(
+              body: SingleChildScrollView(
+                child: Center(
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator()),
-                        Text('Loading Job Card Details...')
-                      ])));
-        }
-      }
-    );
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          children: [
+                            Card(
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(
+                                        'Job Card Number: ${snapshot.data!.jobCardNumber}'),
+                                    subtitle: Text(
+                                        'Job Card Name: ${snapshot.data!.name}'),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );*/
+          } else if (snapshot.hasError) {
+            return Scaffold(body: Center(child: Text('${snapshot.error}')));
+          } else {
+            return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Loading...'),
+                  backgroundColor: const Color(0xFF2661FA),
+                ),
+                body: SafeArea(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                      Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator()),
+                      Text('Loading Job Card Details...')
+                    ])));
+          }
+        });
   }
 }
