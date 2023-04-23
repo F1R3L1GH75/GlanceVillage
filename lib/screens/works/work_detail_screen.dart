@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/work_response.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:provider/provider.dart';
@@ -26,10 +27,9 @@ class WorkDetailScreen extends StatelessWidget {
                 body: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      provider.isError
-                          ? const Text('Error')
-                          : const Text('Work Detail Screen'),
+                      Text('Error: ${provider.errorMessage}'),
                       MaterialButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -45,11 +45,56 @@ class WorkDetailScreen extends StatelessWidget {
               return Scaffold(
                 appBar: AppBar(
                   centerTitle: true,
-                  title: Text('Work Code: ${work!.code ?? 'Loading'}'),
+                  title: Text('Work: ${work!.code ?? 'Loading'}'),
                   backgroundColor: const Color(0xFF2661FA),
                 ),
-                body: const Center(
-                  child: Text('Work Detail Screen'),
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Card(
+                          margin: const EdgeInsets.only(
+                              left: 12, right: 12, top: 12),
+                          child: ListTile(
+                              title: const Text('Work Name'),
+                              subtitle: Text('${work.name}')),
+                        ),
+                        Card(
+                          margin: const EdgeInsets.only(
+                              left: 12, right: 12, top: 12),
+                          child: ListTile(
+                              title: const Text('Nature of Work'),
+                              subtitle: Text('${work.natureOfWork}')),
+                        ),
+                        Card(
+                          margin: const EdgeInsets.only(
+                              left: 12, right: 12, top: 12),
+                          child: ListTile(
+                              title: const Text('Scope of Work'),
+                              subtitle: Text('${work.scopeOfWork}')),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 12, right: 12, top: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Card(
+                                  child: ListTile(
+                                title: Text('Work Status'),
+                                subtitle: Text('Completed'),
+                              )),
+                              Card(
+                                  child: ListTile(
+                                title: Text('Work Progress'),
+                                subtitle: Text('100%'),
+                              )),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               );
             }
@@ -58,7 +103,7 @@ class WorkDetailScreen extends StatelessWidget {
               appBar: AppBar(
                 centerTitle: true,
                 title: const Text('Work Detail: Loading'),
-                backgroundColor: Color(0xFF2661FA),
+                backgroundColor: const Color(0xFF2661FA),
               ),
               body: const Center(
                 child: CircularProgressIndicator(),
@@ -70,13 +115,16 @@ class WorkDetailScreen extends StatelessWidget {
 }
 
 class WorkDetailScreenState with ChangeNotifier {
-  WorkResponse? _work;
-  WorkResponse? get work => _work;
+  WorkFullResponse? _work;
+  WorkFullResponse? get work => _work;
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
   bool _isError = false;
   bool get isError => _isError;
+
+  String _errorMessage = '';
+  String get errorMessage => _errorMessage;
 
   final String? workId;
 
@@ -88,6 +136,7 @@ class WorkDetailScreenState with ChangeNotifier {
   Future<void> getWorkByIdAsync() async {
     _isLoading = true;
     _isError = false;
+    _errorMessage = '';
     try {
       final work = await WorkService.getByIdAsync(workId!);
       _work = work;
@@ -95,6 +144,7 @@ class WorkDetailScreenState with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       _isError = true;
+      _errorMessage = e.toString();
     }
     notifyListeners();
   }
