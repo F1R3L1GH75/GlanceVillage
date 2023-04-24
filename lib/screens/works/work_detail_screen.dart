@@ -105,21 +105,30 @@ class WorkDetailScreen extends StatelessWidget {
                                     )
                                   : const Icon(Icons.construction),
                             )),
-                        Card(
-                          margin:
-                              const EdgeInsets.only(left: 8, right: 8, top: 8),
-                          child: ListTile(
-                              title: const Text('Start Date '),
-                              trailing: Text(DateFormat('dd/MM/yyyy')
-                                  .format(work.startDate!))),
-                        ),
-                        Card(
-                          margin:
-                              const EdgeInsets.only(left: 8, right: 8, top: 8),
-                          child: ListTile(
-                              title: const Text('End Date '),
-                              trailing: Text(DateFormat('dd/MM/yyyy')
-                                  .format(work.endDate!))),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Card(
+                                margin: const EdgeInsets.only(
+                                    left: 8, right: 4, top: 8),
+                                child: ListTile(
+                                    title: const Text('Start Date '),
+                                    subtitle: Text(DateFormat('dd/MM/yyyy')
+                                        .format(work.startDate!))),
+                              ),
+                            ),
+                            Flexible(
+                              child: Card(
+                                margin: const EdgeInsets.only(
+                                    left: 4, right: 8, top: 8),
+                                child: ListTile(
+                                    title: const Text('End Date '),
+                                    subtitle: Text(DateFormat('dd/MM/yyyy')
+                                        .format(work.endDate!))),
+                              ),
+                            )
+                          ],
                         ),
                         Card(
                           margin:
