@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
+import 'package:glancefrontend/screens/works/workorder_detail_screen.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -66,11 +67,11 @@ class WorkOrdersScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                             onTap: () {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (_) =>
-                              //             WorkOrderDetailScreen(workId: work.id)));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => WorkOrderDetailScreen(
+                                          workOrder: workOrder)));
                             },
                             title: Text(DateFormat('dd/MM/yyyy')
                                 .format(workOrder.date!)),
