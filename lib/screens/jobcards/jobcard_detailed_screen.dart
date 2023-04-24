@@ -52,53 +52,47 @@ class JobCardDetailedScreen extends StatelessWidget {
             children: [
               ProfileDetailColumn(
                 title: 'JobCard Number',
-                value: jobCard!.jobCardNumber as String,
+                value: jobCard!.jobCardNumber!,
               ),
               ProfileDetailColumn(
                 title: 'Name',
-                value: jobCard!.name as String,
+                value: jobCard!.name!,
               ),
               ProfileDetailColumn(
                 title: 'Father/Husband Name',
-                value: jobCard!.fatherOrHusbandName as String,
+                value: jobCard!.fatherOrHusbandName!,
               ),
               ProfileDetailColumn(
                 title: 'Email',
-                value: jobCard!.email as String,
+                value: jobCard!.email!,
               ),
               ProfileDetailColumn(
                 title: 'Phone Number',
-                value: jobCard!.mobileNumber as String,
+                value: jobCard!.mobileNumber!,
               ),
               ProfileDetailColumn(
                 title: 'Date of Birth',
-                value: DateFormat('dd/MM/yyyy')
-                    .format(jobCard!.dateOfBirth as DateTime),
+                value: DateFormat('dd/MM/yyyy').format(jobCard!.dateOfBirth!),
               ),
               ProfileDetailColumn(
                 title: 'Ration Card Number',
-                value: jobCard!.rationCardNumber as String,
+                value: jobCard!.rationCardNumber!,
               ),
               ProfileDetailColumn(
                 title: 'Gender',
-                value: jobCard!.gender as String,
+                value: jobCard!.gender!,
               ),
               ProfileDetailColumn(
                 title: 'Category',
-                value: jobCard!.category as String,
+                value: jobCard!.category!,
               ),
               ProfileDetailColumn(
                 title: 'Address',
                 value: address.join(', '),
               ),
               ProfileDetailColumn(
-                title: 'Last Updated On',
-                value: DateFormat('dd/MM/yyyy')
-                    .format(jobCard!.lastUpdatedOn as DateTime),
-              ),
-              ProfileDetailColumn(
                 title: 'Verified on',
-                value: jobCard!.verifiedOn as String,
+                value: jobCard?.verifiedOn ?? 'Not Verified',
               ),
             ],
           ),
