@@ -3,6 +3,7 @@ class ApiRoutes {
   static const jobCardRoutes = JobCard();
   static const usersRoutes = Users();
   static const workRoutes = Work();
+  static const attendanceRoutes = Attendance();
 }
 
 class Dashboard {
@@ -35,4 +36,10 @@ class Work {
   String deleteWorkOrder(String id) => '/api/work-order/$id';
   String getAllWorkOrderAttendance(String id) =>
       '/api/work-order/$id/attendance';
+}
+
+class Attendance {
+  const Attendance();
+  final String attendanceIn = '/api/attendance/in';
+  final String attendanceOut = '/api/attendance/out';
 }
