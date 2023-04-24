@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
+import 'package:glancefrontend/screens/works/workorders_screen.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -152,17 +153,19 @@ class WorkOrderDetailScreen extends StatelessWidget {
                     ],
                   ),
                 )),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Create new attendance'),
-                      ),
-                    );
-                  },
-                  backgroundColor: const Color(0xFF2661FA),
-                  child: const Icon(Icons.add),
-                ),
+                floatingActionButton: workOrder.date!.isSameDate(DateTime.now())
+                    ? FloatingActionButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Create new attendance'),
+                            ),
+                          );
+                        },
+                        backgroundColor: const Color(0xFF2661FA),
+                        child: const Icon(Icons.add),
+                      )
+                    : null,
               );
             }
           }
