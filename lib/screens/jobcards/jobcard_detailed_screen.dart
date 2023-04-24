@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
-import 'package:glancefrontend/services/api/jobcard_service.dart';
 import 'package:intl/intl.dart';
 
 class JobCardDetailedScreen extends StatelessWidget {
@@ -23,14 +22,14 @@ class JobCardDetailedScreen extends StatelessWidget {
       //app bar theme for tablet
       appBar: AppBar(
         backgroundColor: const Color(0xFF2661FA),
-        title: Text('Job Card Details'),
+        title: const Text('Job Card Details'),
         actions: [
           InkWell(
             child: Container(
-              padding: EdgeInsets.only(right: 20, left: 20),
+              padding: const EdgeInsets.only(right: 20, left: 20),
               child: Row(
                 children: [
-                  Icon(Icons.report_gmailerrorred_outlined),
+                  const Icon(Icons.report_gmailerrorred_outlined),
                   const SizedBox(width: 10),
                   Text(
                     'Report',
@@ -72,7 +71,7 @@ class JobCardDetailedScreen extends StatelessWidget {
               ),
               ProfileDetailColumn(
                 title: 'Date of Birth',
-                value: DateFormat('dd/MM/yyyy').format(jobCard!.dateOfBirth!),
+                value: DateFormat('dd/MM/yyyy').format(jobCard!.dateOfBirth),
               ),
               ProfileDetailColumn(
                 title: 'Ration Card Number',
@@ -134,8 +133,8 @@ class ProfileDetailColumn extends StatelessWidget {
                     Text(value),
                   ],
                 )),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
                   child: Icon(
                     Icons.info_outline,
                     size: 17,
