@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glancefrontend/extensions/datetime_extensions.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
 import 'package:glancefrontend/screens/works/workorder_detail_screen.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
@@ -90,12 +91,6 @@ class WorkOrdersScreen extends StatelessWidget {
             }
           }
         });
-  }
-}
-
-extension DateOnlyCompare on DateTime {
-  bool isSameDate(DateTime other) {
-    return year == other.year && month == other.month && day == other.day;
   }
 }
 
