@@ -33,4 +33,6 @@ class Work {
   final String createWorkOrder = '/api/work-order';
   final String updateWorkOrder = '/api/work-order';
   String deleteWorkOrder(String id) => '/api/work-order/$id';
+  String getAllWorkOrderAttendance(String id) =>
+      '/api/work-order/$id/attendance';
 }
