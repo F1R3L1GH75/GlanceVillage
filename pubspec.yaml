@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.18.0
   qrscan: ^0.3.3
   provider: ^6.0.5
+  geolocator: ^9.0.2
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
