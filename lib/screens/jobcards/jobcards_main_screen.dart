@@ -39,40 +39,36 @@ class JobCardsScreen extends StatelessWidget {
                   child: const Icon(Icons.more_vert)))
         ],
       ),
-      body: ChangeNotifierProvider<JobCardsScreenState>(
-        create: (_) => JobCardsScreenState(),
+      body: ChangeNotifierProvider<_JobCardsScreenState>(
+        create: (_) => _JobCardsScreenState(),
         builder: (context, child) {
+          final provider =
+              Provider.of<_JobCardsScreenState>(context, listen: true);
           return Column(children: [
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: DropdownButton<PanchayatResponse>(
                   isExpanded: true,
-                  value: context.watch<JobCardsScreenState>().selectedPanchayat,
-                  items: context
-                      .read<JobCardsScreenState>()
-                      .panchayats
+                  value: provider.selectedPanchayat,
+                  items: provider.panchayats
                       .map<DropdownMenuItem<PanchayatResponse>>((val) {
                     return DropdownMenuItem<PanchayatResponse>(
                         value: val, child: Text(val.name));
                   }).toList(),
                   onChanged: (item) {
-                    context
-                        .read<JobCardsScreenState>()
-                        .setSelectedPanchayat(item);
+                    provider.setSelectedPanchayat(item);
                   }),
             ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.builder(
-                  itemCount:
-                      context.read<JobCardsScreenState>().jobCards.length,
+                  itemCount: provider.jobCards.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    final jobCard =
-                        context.read<JobCardsScreenState>().jobCards[index];
+                    final jobCard = provider.jobCards[index];
                     return Card(
                       child: ListTile(
                         onTap: () {
@@ -99,7 +95,7 @@ class JobCardsScreen extends StatelessWidget {
   }
 }
 
-class JobCardsScreenState with ChangeNotifier {
+class _JobCardsScreenState with ChangeNotifier {
   List<PanchayatResponse> _panchayats = [];
   List<PanchayatResponse> get panchayats => _panchayats;
 
@@ -126,7 +122,7 @@ class JobCardsScreenState with ChangeNotifier {
     notifyListeners();
   }
 
-  JobCardsScreenState() {
+  _JobCardsScreenState() {
     loadUserPanchayats();
   }
 
