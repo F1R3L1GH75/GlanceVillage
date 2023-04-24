@@ -37,39 +37,35 @@ class WorksMainScreen extends StatelessWidget {
                   child: const Icon(Icons.more_vert)))
         ],
       ),
-      body: ChangeNotifierProvider<WorksScreenState>(
-        create: (_) => WorksScreenState(),
+      body: ChangeNotifierProvider<_WorksScreenState>(
+        create: (_) => _WorksScreenState(),
         builder: (context, child) {
+          final provider =
+              Provider.of<_WorksScreenState>(context, listen: true);
           return Column(
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
                 child: DropdownButton<PanchayatResponse>(
                     isExpanded: true,
-                    value: context.watch<WorksScreenState>().selectedPanchayat,
-                    items: context
-                        .read<WorksScreenState>()
-                        .panchayats
+                    value: provider.selectedPanchayat,
+                    items: provider.panchayats
                         .map<DropdownMenuItem<PanchayatResponse>>((val) {
                       return DropdownMenuItem<PanchayatResponse>(
                           value: val, child: Text(val.name));
                     }).toList(),
                     onChanged: (item) {
-                      context
-                          .read<WorksScreenState>()
-                          .setSelectedPanchayat(item);
+                      provider.setSelectedPanchayat(item);
                     }),
               ),
               Expanded(
-                  child: context.read<WorksScreenState>().works.isNotEmpty
+                  child: context.read<_WorksScreenState>().works.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListView.builder(
-                            itemCount:
-                                context.watch<WorksScreenState>().works.length,
+                            itemCount: provider.works.length,
                             itemBuilder: (context, index) {
-                              final work =
-                                  context.read<WorksScreenState>().works[index];
+                              final work = provider.works[index];
                               return Card(
                                 child: ListTile(
                                   onTap: () {
@@ -99,7 +95,7 @@ class WorksMainScreen extends StatelessWidget {
   }
 }
 
-class WorksScreenState with ChangeNotifier {
+class _WorksScreenState with ChangeNotifier {
   List<PanchayatResponse> _panchayats = [];
   List<PanchayatResponse> get panchayats => _panchayats;
 
@@ -128,7 +124,7 @@ class WorksScreenState with ChangeNotifier {
     notifyListeners();
   }
 
-  WorksScreenState() {
+  _WorksScreenState() {
     loadUserPanchayats();
   }
 

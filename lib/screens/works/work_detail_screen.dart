@@ -13,10 +13,10 @@ class WorkDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<WorkDetailScreenState>(
-        create: (context) => WorkDetailScreenState(workId),
+    return ChangeNotifierProvider<_WorkDetailScreenState>(
+        create: (context) => _WorkDetailScreenState(workId),
         builder: (context, child) {
-          final provider = Provider.of<WorkDetailScreenState>(context);
+          final provider = Provider.of<_WorkDetailScreenState>(context);
           final work = provider.work;
           if (provider.isLoading == false) {
             if (provider.isError == true) {
@@ -185,7 +185,7 @@ class WorkDetailScreen extends StatelessWidget {
   }
 }
 
-class WorkDetailScreenState with ChangeNotifier {
+class _WorkDetailScreenState with ChangeNotifier {
   WorkFullResponse? _work;
   WorkFullResponse? get work => _work;
   bool _isLoading = true;
@@ -199,7 +199,7 @@ class WorkDetailScreenState with ChangeNotifier {
 
   final String? workId;
 
-  WorkDetailScreenState(this.workId) {
+  _WorkDetailScreenState(this.workId) {
     _isLoading = true;
     getWorkByIdAsync();
   }

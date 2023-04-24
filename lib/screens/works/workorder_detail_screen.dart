@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/works/work_full_response.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
+import 'package:glancefrontend/screens/works/create_workorder_attendance_screen.dart';
+import 'package:glancefrontend/screens/works/workorder_attendances_screen.dart';
 import 'package:glancefrontend/screens/works/workorders_screen.dart';
 import 'package:glancefrontend/services/api/work_service.dart';
 import 'package:intl/intl.dart';
@@ -14,9 +16,9 @@ class WorkOrderDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => WorkOrderDetailScreenState(workOrder),
+        create: (context) => _WorkOrderDetailScreenState(workOrder),
         builder: (context, child) {
-          final provider = Provider.of<WorkOrderDetailScreenState>(context);
+          final provider = Provider.of<_WorkOrderDetailScreenState>(context);
           if (provider.isLoading == true) {
             return Scaffold(
               appBar: AppBar(
@@ -80,11 +82,12 @@ class WorkOrderDetailScreen extends StatelessWidget {
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 const Color(0xFF2661FA))),
                         onPressed: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (_) => WorkOrdersScreen(
-                          //             workId: work.id, workCode: work.code)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      WorkOrderAttendanceScreen(
+                                          workOrder: workOrder)));
                         },
                         label: const Text('VIEW ATTENDANCES'),
                       ),
@@ -116,14 +119,6 @@ class WorkOrderDetailScreen extends StatelessWidget {
                             title: const Text('Location'),
                             trailing: Text(workOrder.location!)),
                       ),
-                      // GridView.builder(
-                      //   shrinkWrap: true,
-                      //   itemCount: 2,
-                      //   gridDelegate:
-                      //       const SliverGridDelegateWithFixedCrossAxisCount(
-                      //           crossAxisCount: 2),
-                      //   itemBuilder: (context, child) {
-                      //     return Column(children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -156,11 +151,12 @@ class WorkOrderDetailScreen extends StatelessWidget {
                 floatingActionButton: workOrder.date!.isSameDate(DateTime.now())
                     ? FloatingActionButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Create new attendance'),
-                            ),
-                          );
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      CreateWorkOrderAttendanceScreen(
+                                          workOrder: workOrder)));
                         },
                         backgroundColor: const Color(0xFF2661FA),
                         child: const Icon(Icons.add),
@@ -173,8 +169,8 @@ class WorkOrderDetailScreen extends StatelessWidget {
   }
 }
 
-class WorkOrderDetailScreenState with ChangeNotifier {
-  WorkOrderDetailScreenState(this.workOrder) {
+class _WorkOrderDetailScreenState with ChangeNotifier {
+  _WorkOrderDetailScreenState(this.workOrder) {
     getWork();
   }
 

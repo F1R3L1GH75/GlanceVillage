@@ -15,9 +15,9 @@ class WorkOrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => WorkOrderScreenState(workId),
+        create: (context) => _WorkOrderScreenState(workId),
         builder: (context, child) {
-          final provider = Provider.of<WorkOrderScreenState>(context);
+          final provider = Provider.of<_WorkOrderScreenState>(context);
           if (provider.isLoading == true) {
             return Scaffold(
               appBar: AppBar(
@@ -99,7 +99,7 @@ extension DateOnlyCompare on DateTime {
   }
 }
 
-class WorkOrderScreenState with ChangeNotifier {
+class _WorkOrderScreenState with ChangeNotifier {
   int _pageNumber = 1;
   int get pageNumber => _pageNumber;
   void setPageNumber(int page) {
@@ -119,7 +119,7 @@ class WorkOrderScreenState with ChangeNotifier {
     notifyListeners();
   }
 
-  WorkOrderScreenState(this.workId) {
+  _WorkOrderScreenState(this.workId) {
     getWorkOrders();
   }
 

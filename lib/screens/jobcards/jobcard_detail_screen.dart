@@ -11,10 +11,10 @@ class JobCardDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<JobCardDetailScreenState>(
-      create: (_) => JobCardDetailScreenState(jobCardId),
+    return ChangeNotifierProvider<_JobCardDetailScreenState>(
+      create: (_) => _JobCardDetailScreenState(jobCardId),
       builder: (context, child) {
-        final provider = Provider.of<JobCardDetailScreenState>(context);
+        final provider = Provider.of<_JobCardDetailScreenState>(context);
         final jobCard = provider.jobCard;
         if (provider._isLoading == false) {
           if (provider.isError == true) {
@@ -61,7 +61,7 @@ class JobCardDetailScreen extends StatelessWidget {
   }
 }
 
-class JobCardDetailScreenState with ChangeNotifier {
+class _JobCardDetailScreenState with ChangeNotifier {
   JobCardResponse? _jobCard;
   JobCardResponse? get jobCard => _jobCard;
   bool _isLoading = true;
@@ -75,7 +75,7 @@ class JobCardDetailScreenState with ChangeNotifier {
 
   final String? jobCardId;
 
-  JobCardDetailScreenState(this.jobCardId) {
+  _JobCardDetailScreenState(this.jobCardId) {
     _isLoading = true;
     getJobCardByIdAsync();
   }
