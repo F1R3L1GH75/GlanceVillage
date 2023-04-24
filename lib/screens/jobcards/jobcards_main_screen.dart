@@ -8,6 +8,7 @@ import 'package:glancefrontend/services/api/jobcard_service.dart';
 import 'package:glancefrontend/services/api/user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:permission_handler/permission_handler.dart';
 
 class JobCardsScreen extends StatelessWidget {
   const JobCardsScreen({super.key});
@@ -169,6 +170,16 @@ class _ScanQrCodeForJobCardState extends State<ScanQrCodeForJobCard> {
 
   scanQR(BuildContext context) async {
     try {
+      final status = await Permission.camera.status;
+      if (!status.isGranted) {
+        final result = await Permission.camera.request();
+        if (result != PermissionStatus.granted) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Camera permission is required')));
+          }
+        }
+      }
       String? cameraScanResult = await scanner.scan();
       setState(() {
         result = cameraScanResult.toString();
