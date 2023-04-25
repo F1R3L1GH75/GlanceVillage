@@ -1,4 +1,4 @@
-package com.example.glancefrontend
+package com.firelights.glance;
 
 import io.flutter.embedding.android.FlutterActivity
 
