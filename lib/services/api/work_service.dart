@@ -77,7 +77,7 @@ class WorkService {
         headers: await ApiSettings.getHeaders(addAuthToken: true));
     if (response.statusCode == 200) {
       final jsonBody = jsonDecode(response.body);
-      final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
+      final success = JsonMapper.deserialize<bool>(jsonBody['succeeded'])!;
       if (success == true) {
         return JsonMapper.deserialize<List<WorkOrderResponse>>(
             jsonBody['data'])!;
