@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
-import 'package:glancefrontend/screens/jobcards/jobcard_detailed_screen.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class JobCardDetailScreen extends StatelessWidget {
@@ -29,20 +29,90 @@ class JobCardDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Error: ${provider.errorMessage}'),
-                    MaterialButton(
+                    Text(
+                      'Error: ${provider.errorMessage}',
+                      textAlign: TextAlign.center,
+                    ),
+                    ElevatedButton.icon(
+                        icon: const Icon(Icons.arrow_back),
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        color: const Color(0xFF2661FA),
-                        textColor: Colors.white,
-                        child: const Text('Go Back'))
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2661FA),
+                        ),
+                        label: const Text('Go Back'))
                   ],
                 ),
               ),
             );
           } else {
-            return JobCardDetailedScreen(jobCard: jobCard!);
+            final address = [
+              jobCard!.address,
+              jobCard.village,
+              jobCard.district,
+              jobCard.state,
+              jobCard.pinCode,
+            ];
+            return Scaffold(
+                appBar: AppBar(
+                    backgroundColor: const Color(0xFF2661FA),
+                    title: const Text('Job Card Details')),
+                body: SingleChildScrollView(
+                    child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _ProfileDetailColumn(
+                        title: 'JobCard Number',
+                        value: jobCard.jobCardNumber ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Name',
+                        value: jobCard.name ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Father/Husband Name',
+                        value: jobCard.fatherOrHusbandName ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Email',
+                        value: jobCard.email ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Phone Number',
+                        value: jobCard.mobileNumber ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Date of Birth',
+                        value: DateFormat('dd/MM/yyyy')
+                            .format(jobCard.dateOfBirth),
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Ration Card Number',
+                        value: jobCard.rationCardNumber ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Gender',
+                        value: jobCard.gender!,
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Category',
+                        value: jobCard.category ?? 'Not Available',
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Address',
+                        value: address.join(', '),
+                      ),
+                      _ProfileDetailColumn(
+                        title: 'Verified on',
+                        value: jobCard.verifiedOn ?? 'Not Verified',
+                      ),
+                    ],
+                  ),
+                )));
           }
         } else {
           return Scaffold(
@@ -57,6 +127,50 @@ class JobCardDetailScreen extends StatelessWidget {
           );
         }
       },
+    );
+  }
+}
+
+class _ProfileDetailColumn extends StatelessWidget {
+  const _ProfileDetailColumn(
+      {Key? key, required this.title, required this.value})
+      : super(key: key);
+  final String title;
+  final String value;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(value),
+                  ],
+                )),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 17,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
