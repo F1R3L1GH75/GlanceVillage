@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:glancefrontend/extensions/datetime_extensions.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
 import 'package:glancefrontend/screens/works/workorder_detail_screen.dart';
@@ -87,6 +88,15 @@ class WorkOrdersScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                floatingActionButton: provider.canAddWorkOrder
+                    ? FloatingActionButton(
+                        onPressed: () {
+                          provider.createWorkOrder(context);
+                        },
+                        backgroundColor: const Color(0xFF2661FA),
+                        child: const Icon(Icons.add),
+                      )
+                    : null,
               );
             }
           }
@@ -124,6 +134,12 @@ class _WorkOrderScreenState with ChangeNotifier {
   String errorMessage = '';
   List<WorkOrderResponse>? workOrders;
 
+  bool _canAddWorkOrder = false;
+  bool get canAddWorkOrder => _canAddWorkOrder;
+
+  String _location = '';
+  String get location => _location;
+
   Future<void> getWorkOrders() async {
     try {
       isLoading = true;
@@ -133,11 +149,122 @@ class _WorkOrderScreenState with ChangeNotifier {
       final response = await WorkService.getWorkOrders(
           workId!, pageNumber, pageSize, searchQuery);
       workOrders = response;
+      if (workOrders!.any((e) => e.date!.isSameDate(DateTime.now()))) {
+        _canAddWorkOrder = false;
+      } else {
+        _canAddWorkOrder = true;
+      }
     } catch (e) {
       isError = true;
       errorMessage = e.toString();
     }
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> createWorkOrder(BuildContext context) async {
+    try {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                content: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Expanded(child: Text('Creating Work Order...'))
+              ],
+            ));
+          },
+          barrierDismissible: false);
+      if (await Geolocator.isLocationServiceEnabled() == false) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Location Services are not enabled!'),
+            ),
+          );
+          return;
+        }
+      }
+      if (context.mounted) {
+        final locationAccepted = await getLocationName(context);
+        if (locationAccepted == false) {
+          return;
+        }
+      }
+      final geoLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      await WorkService.createWorkOrder(
+          location, geoLocation.latitude, geoLocation.longitude, workId!);
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Work Order Created!'),
+          ),
+        );
+      }
+      _canAddWorkOrder = false;
+      getWorkOrders();
+      notifyListeners();
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<bool> getLocationName(BuildContext context) async {
+    bool result = false;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController controller = TextEditingController();
+        return AlertDialog(
+          title: const Text('Enter Location Name'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Location Name'),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF2661FA),
+                ),
+                child: const Text('Cancel')),
+            ElevatedButton(
+                onPressed: () {
+                  _location = controller.text;
+                  result = true;
+                  Navigator.pop(context, controller.text);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2661FA),
+                ),
+                child: const Text('OK'))
+          ],
+        );
+      },
+    );
+    return result;
   }
 }
