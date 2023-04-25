@@ -14,8 +14,7 @@ class Dashboard {
 class JobCard {
   const JobCard();
   String getJobCardById(String id) => '/api/job-card/get/$id';
-  String getJobCardByCardNumber(String cardno) =>
-      '/api/job-card/get?cardno=$cardno';
+  final String getJobCardByCardNumber = '/api/job-card/get';
   final String getAll = '/api/job-card/get';
 }
 
