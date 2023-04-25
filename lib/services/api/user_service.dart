@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:glancefrontend/models/users/user_assigned_panchayats.dart';
@@ -20,6 +21,26 @@ class UserService {
       if (success == true) {
         return JsonMapper.deserialize<UserAssignedPanchayats>(
             jsonBody['data'])!;
+      } else {
+        return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
+      }
+    } else {
+      return Future.error(
+          "Request Failed. Status Code : ${response.statusCode}");
+    }
+  }
+
+  static Future<String> getFingerprint() async {
+    final userId = await ClaimDataService.getUserId();
+    final response = await http.get(
+        Uri.https(
+            ApiSettings.baseUrl, ApiRoutes.usersRoutes.getFingerprint(userId)),
+        headers: await ApiSettings.getHeaders(addAuthToken: true));
+    if (response.statusCode == 200) {
+      final jsonBody = jsonDecode(response.body);
+      final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
+      if (success == true) {
+        return jsonBody['data'] as String;
       } else {
         return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
       }

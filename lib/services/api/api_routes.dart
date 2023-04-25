@@ -24,6 +24,7 @@ class Users {
   final String login = '/api/users/token';
   final String refreshToken = '/api/users/token/refresh';
   String getUserAssignedPanchayats(String id) => '/api/users/$id/panchayats';
+  String getFingerprint(String id) => '/api/users/$id/finger';
 }
 
 class Work {
