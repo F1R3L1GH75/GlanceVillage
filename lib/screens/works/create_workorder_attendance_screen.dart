@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
+import 'package:glancefrontend/services/api/attendance_service.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +60,9 @@ class CreateWorkOrderAttendanceScreen extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF2661FA),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  provider.getJobCardNumber(context);
+                                },
                                 label: const Text('ENTER JOBCARD ID')),
                           ),
                         ],
@@ -104,12 +107,99 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
     notifyListeners();
   }
 
+  String? _jobCardNumber = '';
+  String? get jobCardNumber => _jobCardNumber;
+  set jobCardNumber(String? value) {
+    _jobCardNumber = value;
+    notifyListeners();
+  }
+
   Future<void> submitAsync(BuildContext context) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Create Attendance From State Class'),
-      ),
-    );
+    if (await Geolocator.isLocationServiceEnabled()) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location Services are not enabled!'),
+          ),
+        );
+      }
+    }
+    final location = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    // final response = await AttendanceService.markAttendanceIn(
+    //     jobCardId!, workOrder.workOrderId!, location);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Create Attendance From State Class'),
+        ),
+      );
+    }
+  }
+
+  Future<void> getJobCardNumber(BuildContext context) async {
+    try {
+      showDialog(
+        context: context,
+        builder: (context) {
+          final TextEditingController controller = TextEditingController();
+          return AlertDialog(
+            title: const Text('Enter Job Card Number'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'Job Card Number'),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF2661FA),
+                  ),
+                  child: const Text('Cancel')),
+              ElevatedButton(
+                  onPressed: () async {
+                    jobCardNumber = controller.text;
+                    Navigator.pop(context, controller.text);
+                    final response =
+                        await JobCardService.getJobCardByCardNumber(
+                            jobCardNumber!);
+                    if (response == null) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Invalid JobCard ID')));
+                      }
+                    }
+                    jobCard = response;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2661FA),
+                  ),
+                  child: const Text('OK'))
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        },
+      );
+    }
   }
 
   Future<void> scanQRCodeAsync(BuildContext context) async {
