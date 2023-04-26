@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
+import 'package:glancefrontend/services/api/api_settings.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,8 @@ class JobCardDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      Image.network(
+                          'https://${ApiSettings.baseUrl}/Files/Images/$jobCardId/${jobCardId}_0310.jpeg'),
                       _ProfileDetailColumn(
                         title: 'JobCard Number',
                         value: jobCard.jobCardNumber ?? 'Not Available',
