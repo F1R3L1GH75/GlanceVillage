@@ -30,7 +30,7 @@ class UserService {
     }
   }
 
-  static Future<String> getFingerprint() async {
+  static Future<List<int>> getFingerprint() async {
     final userId = await ClaimDataService.getUserId();
     final response = await http.get(
         Uri.https(
@@ -40,7 +40,7 @@ class UserService {
       final jsonBody = jsonDecode(response.body);
       final success = JsonMapper.deserialize<bool>(jsonBody['succeeded']);
       if (success == true) {
-        return jsonBody['data'] as String;
+        return base64Decode(jsonBody['data'] as String);
       } else {
         return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
       }
