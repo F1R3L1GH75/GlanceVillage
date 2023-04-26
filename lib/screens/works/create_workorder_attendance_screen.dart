@@ -415,7 +415,7 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
               ]);
         },
         barrierDismissible: false);
-    final fingerBytes = await JobCardService.getJobCardByIdAsync(jobCardId!);
+    final fingerBytes = await JobCardService.getJobCardFingerprint(jobCardId!);
     try {
       final success = await fingerPrintChannel.invokeMethod(
           'verifyFingerprint', fingerBytes);
