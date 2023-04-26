@@ -7,6 +7,26 @@ import 'package:glancefrontend/services/api/api_settings.dart';
 import 'package:http/http.dart' as http_client;
 
 class AttendanceService {
+  static Future<bool> isAttendanceIn(
+      String jobCardId, String workOrderId) async {
+    final response = await http_client.get(
+        Uri.https(ApiSettings.baseUrl, ApiRoutes.attendanceRoutes.attendanceIn,
+            {'jobCardId': jobCardId, 'workOrderId': workOrderId}),
+        headers: await ApiSettings.getHeaders(addAuthToken: true));
+    if (response.statusCode == 200) {
+      final jsonBody = jsonDecode(response.body);
+      final success = JsonMapper.deserialize<bool>(jsonBody['succeeded'])!;
+      if (success) {
+        return JsonMapper.deserialize<bool>(jsonBody['data'])!;
+      } else {
+        return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
+      }
+    } else {
+      return Future.error(
+          "Request Failed. Status Code : ${response.statusCode}");
+    }
+  }
+
   static Future<Result> markAttendanceIn(
       String jobCardId, String workOrderId, double? lat, double? long) async {
     final response = await http_client.post(
@@ -26,6 +46,26 @@ class AttendanceService {
         return Result(
             messages: List<String>.from(jsonBody['messages']),
             succeeded: success);
+      } else {
+        return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
+      }
+    } else {
+      return Future.error(
+          "Request Failed. Status Code : ${response.statusCode}");
+    }
+  }
+
+  static Future<bool> isAttendanceOut(
+      String jobCardId, String workOrderId) async {
+    final response = await http_client.get(
+        Uri.https(ApiSettings.baseUrl, ApiRoutes.attendanceRoutes.attendanceOut,
+            {'jobCardId': jobCardId, 'workOrderId': workOrderId}),
+        headers: await ApiSettings.getHeaders(addAuthToken: true));
+    if (response.statusCode == 200) {
+      final jsonBody = jsonDecode(response.body);
+      final success = JsonMapper.deserialize<bool>(jsonBody['succeeded'])!;
+      if (success) {
+        return JsonMapper.deserialize<bool>(jsonBody['data'])!;
       } else {
         return Future.error(List<String>.from(jsonBody['messages']).join("\n"));
       }
