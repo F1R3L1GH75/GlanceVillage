@@ -16,6 +16,7 @@ class JobCard {
   String getJobCardById(String id) => '/api/job-card/get/$id';
   final String getJobCardByCardNumber = '/api/job-card/get';
   final String getAll = '/api/job-card/get';
+  String getFingerprint(String id) => '/api/job-card/$id/finger';
 }
 
 class Users {
