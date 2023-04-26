@@ -4,6 +4,8 @@ import 'package:glancefrontend/models/jobcards/jobcard_response.dart';
 import 'package:glancefrontend/models/works/workorder_response.dart';
 import 'package:glancefrontend/services/api/attendance_service.dart';
 import 'package:glancefrontend/services/api/jobcard_service.dart';
+import 'package:glancefrontend/services/api/user_service.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
@@ -36,59 +38,149 @@ class CreateWorkOrderAttendanceScreen extends StatelessWidget {
               ],
             ),
             body: SafeArea(
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            child: ElevatedButton.icon(
-                                icon: const Icon(Icons.qr_code_scanner_rounded),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2661FA),
-                                ),
-                                onPressed: () {
-                                  provider.scanQRCodeAsync(context);
-                                },
-                                label: const Text('SCAN EMPLOYEE')),
-                          ),
-                          Flexible(
-                            child: ElevatedButton.icon(
-                                icon: const Icon(Icons.person),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2661FA),
-                                ),
-                                onPressed: () {
-                                  provider.getJobCardNumber(context);
-                                },
-                                label: const Text('ENTER JOBCARD ID')),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      provider.jobCard != null
-                          ? Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListTile(
-                                  title: const Text('JobCard ID'),
-                                  subtitle:
-                                      Text(provider.jobCard!.jobCardNumber!),
-                                ),
-                              ),
-                            )
-                          : const Text('No JobCard Selected'),
-                    ],
-                  )),
+              child: SingleChildScrollView(
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Flexible(
+                              child: ElevatedButton.icon(
+                                  icon:
+                                      const Icon(Icons.qr_code_scanner_rounded),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2661FA),
+                                  ),
+                                  onPressed: () {
+                                    provider.scanQRCodeAsync(context);
+                                  },
+                                  label: const Text('SCAN EMPLOYEE')),
+                            ),
+                            Flexible(
+                              child: ElevatedButton.icon(
+                                  icon: const Icon(Icons.person),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2661FA),
+                                  ),
+                                  onPressed: () {
+                                    provider.getJobCardNumber(context);
+                                  },
+                                  label: const Text('ENTER JOBCARD ID')),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        _LoadJobCardAndAttendanceForm()
+                      ],
+                    )),
+              ),
             ),
           );
         });
   }
 }
 
+class _LoadJobCardAndAttendanceForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<_CreateWorkOrderAttendanceState>(context);
+    if (provider.jobCard != null) {
+      return Column(
+        children: [
+          Card(
+            child: Column(
+              children: [
+                Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        'Work Order Details',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  title: const Text('WorkOrder ID'),
+                  trailing: Text(provider.workOrder.code!),
+                ),
+                ListTile(
+                  title: const Text('Date/Time'),
+                  trailing: Text(DateFormat("dd-MM-yyyy hh:mm:ss aa")
+                      .format(DateTime.now())),
+                ),
+                ListTile(
+                  title: const Text('Name'),
+                  subtitle: Text(provider.workOrder.workName!),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              provider.verifyJobCardFingerPrint(context);
+            },
+            label: const Text('Verify JobCard'),
+            icon: const Icon(Icons.fingerprint_rounded),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2661FA),
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        'JobCard Details',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  title: const Text('JobCard ID'),
+                  trailing: Text(provider.jobCard!.jobCardNumber!),
+                ),
+                ListTile(
+                  title: const Text('Name'),
+                  trailing: Text(provider.jobCard!.name!),
+                ),
+                ListTile(
+                  title: const Text('Father/Husband Name'),
+                  trailing:
+                      Text(provider.jobCard!.fatherOrHusbandName ?? "N/A"),
+                ),
+                ListTile(
+                  title: const Text('Mobile'),
+                  trailing: Text(provider.jobCard!.mobileNumber ?? "N/A"),
+                ),
+                ListTile(
+                  title: const Text('Email'),
+                  trailing: Text(provider.jobCard!.email ?? "N/A"),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
+    } else {
+      return const Text('No JobCard Selected');
+    }
+  }
+}
+
 class _CreateWorkOrderAttendanceState with ChangeNotifier {
+  static const fingerPrintChannel =
+      MethodChannel('com.firelights.glance/fingerprint');
+
   _CreateWorkOrderAttendanceState(this.workOrder);
 
   final WorkOrderResponse workOrder;
@@ -114,6 +206,8 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
     notifyListeners();
   }
 
+  bool verifiedJobCard = false;
+
   Future<void> submitAsync(BuildContext context) async {
     if (await Geolocator.isLocationServiceEnabled()) {
       if (context.mounted) {
@@ -124,6 +218,34 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
         );
       }
     }
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Confirm'),
+            content:
+                const Text('Are you sure you want to create this attendance?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF2661FA),
+                  ),
+                  child: const Text('Cancel')),
+              ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2661FA),
+                  ),
+                  child: const Text('OK'))
+            ],
+          );
+        },
+      );
+    }
     final location = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     // final response = await AttendanceService.markAttendanceIn(
@@ -131,7 +253,7 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Create Attendance From State Class'),
+          content: Text('Marked Attendance Successfully!'),
         ),
       );
     }
@@ -216,14 +338,16 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
       }
       String? cameraScanResult = await scanner.scan();
       jobCardId = cameraScanResult;
-      final response = await JobCardService.getJobCardByIdAsync(jobCardId!);
-      if (response == null) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid JobCard ID')));
+      if (jobCardId != null) {
+        final response = await JobCardService.getJobCardByIdAsync(jobCardId!);
+        if (response == null) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invalid JobCard ID')));
+          }
         }
+        jobCard = response;
       }
-      jobCard = response;
     } on PlatformException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to get platform version. $e')));
@@ -266,5 +390,93 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  Future verifyJobCardFingerPrint(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Verify JobCard Fingerprint'),
+            content: Text(
+                'Ask the JobCard holder to place his/her finger on the scanner'),
+          );
+        },
+        barrierDismissible: false);
+    final fingerBytes = await JobCardService.getJobCardByIdAsync(jobCardId!);
+    try {
+      final success = await fingerPrintChannel.invokeMethod(
+          'verifyFingerprint', fingerBytes);
+      if (success) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fingerprint verification successful!'),
+            ),
+          );
+          Navigator.pop(context);
+        }
+        verifiedJobCard = true;
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fingerprint verification failed!'),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  Future verifyUserFingerPrint(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Authenticate User Fingerprint'),
+            content: Text('Place your finger on the scanner'),
+          );
+        },
+        barrierDismissible: false);
+    final fingerBytes = await UserService.getFingerprint();
+    try {
+      final success = await fingerPrintChannel.invokeMethod(
+          'verifyFingerprint', fingerBytes);
+      if (success) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fingerprint verification successful!'),
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fingerprint verification failed!'),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+          ),
+        );
+      }
+    }
   }
 }
