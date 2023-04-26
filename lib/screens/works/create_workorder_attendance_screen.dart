@@ -120,16 +120,21 @@ class _LoadJobCardAndAttendanceForm extends StatelessWidget {
               ],
             ),
           ),
-          ElevatedButton.icon(
-            onPressed: () {
-              provider.verifyJobCardFingerPrint(context);
-            },
-            label: const Text('Verify JobCard'),
-            icon: const Icon(Icons.fingerprint_rounded),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2661FA),
-            ),
-          ),
+          provider.verifiedJobCard
+              ? MaterialButton(
+                  onPressed: () {},
+                  enableFeedback: false,
+                  child: const Text('Job Card Verified'))
+              : ElevatedButton.icon(
+                  onPressed: () {
+                    provider.verifyJobCardFingerPrint(context);
+                  },
+                  label: const Text('Verify JobCard'),
+                  icon: const Icon(Icons.fingerprint_rounded),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2661FA),
+                  ),
+                ),
           Card(
             child: Column(
               children: [
@@ -396,11 +401,18 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
     showDialog(
         context: context,
         builder: (context) {
-          return const AlertDialog(
-            title: Text('Verify JobCard Fingerprint'),
-            content: Text(
-                'Ask the JobCard holder to place his/her finger on the scanner'),
-          );
+          return AlertDialog(
+              title: const Text('Verify JobCard Fingerprint'),
+              content: const Text(
+                  'Ask the JobCard holder to place his/her finger on the scanner'),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      return;
+                    },
+                    child: const Text('Cancel'))
+              ]);
         },
         barrierDismissible: false);
     final fingerBytes = await JobCardService.getJobCardByIdAsync(jobCardId!);
@@ -442,10 +454,17 @@ class _CreateWorkOrderAttendanceState with ChangeNotifier {
     showDialog(
         context: context,
         builder: (context) {
-          return const AlertDialog(
-            title: Text('Authenticate User Fingerprint'),
-            content: Text('Place your finger on the scanner'),
-          );
+          return AlertDialog(
+              title: const Text('Authenticate User Fingerprint'),
+              content: const Text('Place your finger on the scanner'),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      return;
+                    },
+                    child: const Text('Cancel'))
+              ]);
         },
         barrierDismissible: false);
     final fingerBytes = await UserService.getFingerprint();
